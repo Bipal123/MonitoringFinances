@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using MonitoringFinances.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,5 +14,6 @@ namespace MonitoringFinances.Data
         {
 
         }
+        public DbSet<ApplicationUser> ApplicationUser { get; set; }
     }
 }
