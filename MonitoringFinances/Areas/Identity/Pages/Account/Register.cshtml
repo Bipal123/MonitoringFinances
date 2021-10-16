@@ -1,4 +1,5 @@
 ﻿@page
+@using MonitoringFinances 
 @model RegisterModel
 @{
     ViewData["Title"] = "Register";
@@ -37,6 +38,15 @@
                 <input asp-for="Input.ConfirmPassword" class="form-control" />
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
+            @if (User.IsInRole(WebConstant.AdminRole)) {
+            <div class="form-group">
+                <label asp-for="Input.AssignedRole"></label>
+                <select asp-for="Input.AssignedRole" asp-items="@Model.AllRoles" class="form-control">
+                    <option disabled selected>--Select Role--</option>
+                </select>
+                <span asp-validation-for="Input.AssignedRole" class="text-danger"></span>
+            </div>
+            }
             <button type="submit" class="btn btn-primary">Register</button>
         </form>
     </div>
