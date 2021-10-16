@@ -16,6 +16,14 @@
                 <input asp-for="Username" class="form-control" disabled />
             </div>
             <div class="form-group">
+                <label asp-for="Roles"></label>
+                @foreach (var role in Model.Roles)
+                {
+                    <input value="@role" class="form-control" disabled />
+                }
+
+            </div>
+            <div class="form-group">
                 <label asp-for="Input.FirstName"></label>
                 <input asp-for="Input.FirstName" class="form-control" />
                 <span asp-validation-for="Input.FirstName" class="text-danger"></span>
