@@ -6,6 +6,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MonitoringFinances.Data;
+using MonitoringFinances.Models;
+using System;
+using System.Threading.Tasks;
 
 namespace MonitoringFinances
 {
@@ -23,13 +26,14 @@ namespace MonitoringFinances
         {
             services.AddDbContext<ApplicationDbContext>(options => 
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>()
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddDefaultTokenProviders().AddDefaultUI()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -55,6 +59,57 @@ namespace MonitoringFinances
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            CreateRolesAndTestAccounts(serviceProvider).Wait();
+        }
+
+        private static async Task CreateRolesAndTestAccounts(IServiceProvider serviceProvider)
+        {
+            var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var UserManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+            string[] roleNames = { WebConstant.AdminRole, WebConstant.StandardUserRole };
+            IdentityResult roleResult;
+
+            foreach (var roleName in roleNames)
+            {
+                var roleExist = await RoleManager.RoleExistsAsync(roleName);
+                if (!roleExist)
+                {
+                    roleResult = await RoleManager.CreateAsync(new IdentityRole(roleName));
+                }
+            }
+
+            var _adminTest = await UserManager.FindByEmailAsync(WebConstant.TestAdminEmail);
+            if (_adminTest == null)
+            {
+                var adminTest = new ApplicationUser
+                {
+                    UserName = WebConstant.TestAdminEmail,
+                    Email = WebConstant.TestAdminEmail,
+                    FirstName = "Admin",
+                    LastName = "Account"
+                };
+
+                var createAdminResult = await UserManager.CreateAsync(adminTest, WebConstant.TestAdminPassword);
+                if (createAdminResult.Succeeded)
+                    await UserManager.AddToRoleAsync(adminTest, WebConstant.AdminRole);
+            }
+            var _standardUserTest = await UserManager.FindByEmailAsync(WebConstant.TestStandardUserEmail);
+            if (_standardUserTest == null)
+            {
+                var standardUserTest = new ApplicationUser
+                {
+                    UserName = WebConstant.TestStandardUserEmail,
+                    Email = WebConstant.TestStandardUserPassword,
+                    FirstName = "StandardUser",
+                    LastName = "Account"
+                };
+
+                var createStandardUserResult = await UserManager.CreateAsync(standardUserTest, WebConstant.TestStandardUserPassword);
+                if (createStandardUserResult.Succeeded)
+                    await UserManager.AddToRoleAsync(standardUserTest, WebConstant.StandardUserRole);
+            }
+
         }
     }
 }
