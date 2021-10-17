@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using MonitoringFinances.Models;
+using MonitoringFinances.Models.Identity;
 
 namespace MonitoringFinances.Areas.Identity.Pages.Account
 {

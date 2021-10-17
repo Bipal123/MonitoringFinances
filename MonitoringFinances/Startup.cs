@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MonitoringFinances.Data;
 using MonitoringFinances.Models;
+using MonitoringFinances.Models.Identity;
 using System;
 using System.Threading.Tasks;
 

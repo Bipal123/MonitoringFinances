@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MonitoringFinances.Models;
+using MonitoringFinances.Models.Identity;
 
 namespace MonitoringFinances.Areas.Identity.Pages.Account.Manage
 {

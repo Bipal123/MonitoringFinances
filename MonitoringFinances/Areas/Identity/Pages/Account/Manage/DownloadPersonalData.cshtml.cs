@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using MonitoringFinances.Models;
+using MonitoringFinances.Models.Identity;
 
 namespace MonitoringFinances.Areas.Identity.Pages.Account.Manage
 {
