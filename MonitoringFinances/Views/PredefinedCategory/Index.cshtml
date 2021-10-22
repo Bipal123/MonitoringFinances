@@ -2,21 +2,19 @@
 @{
     int counter = 1;
 }
-<div class="container p-3">
+<div class="container">
     <div class="row my-3">
-
-        <div class="col-5 p-3">
+        <div class="col-12 col-md-5 p-3 ">
             <h1 class="display-5">
                 Predefined Categories
             </h1>
         </div>
-        <div class="col-4 offset-3 text-end d-flex align-items-center justify-content-end">
+        <div class="col-12 col-md-4 offset-md-3 text-end d-flex align-items-center justify-content-md-end">
             <a class="btn btn-primary px-4 fs-5" asp-controller="PredefinedCategoryController" asp-action="Upsert">
                 <i class="fas fa-plus"></i>&nbsp;Create New
             </a>
         </div>
     </div>
-    <br /><br />
     <div class="row my-3">
         @if (Model.Count() > 0)
         {
