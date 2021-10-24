@@ -1,0 +1,16 @@
+﻿@model MonitoringFinances.Models.AdminModels.PredefinedCategory
+
+<form id="UpSertPredefinedCategoryForm">
+    <input type="hidden" asp-for="Id" />
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label">Name</label>
+        <input asp-for="Name" class="form-control" id="Name" aria-describedby="Name">
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+</form>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

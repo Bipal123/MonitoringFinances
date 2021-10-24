@@ -23,10 +23,45 @@ namespace MonitoringFinances.Controllers
             return View(predefinedCategoryList);
         }
 
-        ////Get - Insert and Update
-        //public IActionResult UpSert()
-        //{
+        //Get - Insert and Update
+        [HttpGet]
+        public IActionResult UpSert(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return PartialView("~/Views/PredefinedCategory/_Upsert.cshtml");
+            }
+            else
+            {
+                PredefinedCategory predefinedCategory = _db.PredefinedCategory.Find(id);
+                if (predefinedCategory == null)
+                {
+                    return NotFound();
+                }
+                return PartialView("~/Views/PredefinedCategory/_Upsert.cshtml", predefinedCategory);
+            }
+        }
 
-        //}
+        [HttpPost]
+        public IActionResult Upsert(PredefinedCategory predefinedCategory)
+        {
+            if (ModelState.IsValid)
+            {
+                if (predefinedCategory.Id == 0)
+                {
+                    _db.PredefinedCategory.Add(predefinedCategory);
+                }
+                else
+                {
+                    _db.PredefinedCategory.Update(predefinedCategory);
+                }
+                _db.SaveChanges();
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                return PartialView("~/Views/PredefinedCategory/_Upsert.cshtml", predefinedCategory);
+            }
+        }
     }
 }
