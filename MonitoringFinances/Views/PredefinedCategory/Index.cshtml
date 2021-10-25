@@ -81,34 +81,13 @@
 
 @section Scripts {
     <script>
-        /*
-         * Javascript function to create or edit predefined categories
-        */
-        var UpSert = function (Id) {
+       var UpSert = function (Id) {
             var url = "/PredefinedCategory/UpSert?Id=" + Id;
             if (Id > 0)
                 $('#modal-title').html("Edit Predefined Category");
             $("#UpSertPredefinedCategoryModalBody").load(url, function () {
                 $("#UpSertPredefinedCategoryModal").modal("show");
             });
-        }
-
-            //$('body').on('click', "#UpSertPredefinedCategoryFormButton", function () {
-            //    var myformdata = $("#UpSertPredefinedCategoryForm").serialize();
-            //    $.ajax({
-            //        type: "POST",
-            //        url: "/PredefinedCategory/UpSert",
-            //        data: myformdata,
-            //        success: function () {
-            //            window.location.href = "/PredefinedCategory/Index";
-            //        },
-            //        error: function (errormessage) {
-            //            alert(errormessage.responseText);
-            //        }
-            //    })
-            //})
+       }
     </script>
-    @{
-        <partial name="_ValidationScriptsPartial" />
-    }
 }
