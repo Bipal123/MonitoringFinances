@@ -60,7 +60,9 @@ namespace MonitoringFinances.Controllers
             }
             else
             {
-                return PartialView("~/Views/PredefinedCategory/_Upsert.cshtml", predefinedCategory);
+                TempData["isModelStateValid"] = false;
+                return RedirectToAction("Index");
+                //return PartialView("~/Views/PredefinedCategory/_Upsert.cshtml", predefinedCategory);
             }
         }
     }

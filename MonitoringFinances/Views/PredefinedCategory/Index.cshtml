@@ -4,13 +4,13 @@
 }
 <div class="container">
     <div class="row my-3">
-        <div class="col-12 col-md-5 p-3 ">
+        <div class="col-12 col-md-8 p-3 ">
             <h1 class="display-5">
                 Predefined Categories
             </h1>
         </div>
-        <div class="col-12 col-md-4 offset-md-3 text-end d-flex align-items-center justify-content-md-end">
-            <a class="btn btn-primary px-4 fs-5" onclick="UpSert(0)">
+        <div class="col-12 col-md-4 text-end d-flex align-items-center justify-content-md-end">
+            <a class="btn btn-dark px-4 fs-5" onclick="UpSert(0)">
                 <i class="fas fa-plus"></i>&nbsp;Create New
             </a>
         </div>
@@ -19,13 +19,13 @@
         @if (Model.Count() > 0)
         {
             <div class="row my-3">
-                <div class="">
+                <div class="d-flex align-items-center">
                     <table class="table table-striped text-center align-middle">
                         <thead>
                             <tr>
-                                <th scope="col" class="fs-4">#</th>
-                                <th scope="col" class="fs-4">Name</th>
-                                <th scope="col" class="fs-4">Action</th>
+                                <th scope="col" class="fs-5">#</th>
+                                <th scope="col" class="fs-5">Name</th>
+                                <th scope="col" class="fs-5">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -33,7 +33,7 @@
                             {
                                 <tr>
                                     <th scope="row" class="fs-5">@counter</th>
-                                    <td class="fs-4">@preDefinedCategory.Name</td>
+                                    <td class="fs-5">@preDefinedCategory.Name</td>
                                     <td class="text-center">
                                         <div class="w-50 btn-group" role="group">
                                             <a onclick="UpSert(@preDefinedCategory.Id)" class="btn btn-primary mx-2">
@@ -55,7 +55,7 @@
         else
         {
             <div class="col p-3">
-                <p class="lead">No Predefined Categories Exists!</p>
+                <p class="lead">No Predefined Category Exists!</p>
             </div>
         }
     </div>
@@ -66,14 +66,14 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modal-title">Create PredefinedCategory</h5>
+                <h5 class="modal-title" id="modal-title">Create Predefined Category</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="UpSertPredefinedCategoryModalBody">
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer d-flex justify-content-center">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button id="UpSertPredefinedCategoryFormButton" form="UpSertPredefinedCategoryForm" type="button" class="btn btn-primary">Save</button>
+                <button id="UpSertPredefinedCategoryFormButton" form="UpSertPredefinedCategoryForm" type="submit" class="btn btn-primary">Save</button>
             </div>
         </div>
     </div>
@@ -85,29 +85,30 @@
          * Javascript function to create or edit predefined categories
         */
         var UpSert = function (Id) {
-            console.log("Some Text" + Id);
             var url = "/PredefinedCategory/UpSert?Id=" + Id;
             if (Id > 0)
-                $('#modal-title').html("Edit PredefinedCategory");
+                $('#modal-title').html("Edit Predefined Category");
             $("#UpSertPredefinedCategoryModalBody").load(url, function () {
                 $("#UpSertPredefinedCategoryModal").modal("show");
             });
         }
 
-        $('body').on('click', "#UpSertPredefinedCategoryFormButton", function () {
-            var myformdata = $("#UpSertPredefinedCategoryForm").serialize();
-            $.ajax({
-                type: "POST",
-                url: "/PredefinedCategory/UpSert",
-                data: myformdata,
-                success: function () {
-                    window.location.href = "/PredefinedCategory/Index";
-                },
-                error: function (errormessage) {
-                    alert(errormessage.responseText);
-                }
-            })
-        })
+            //$('body').on('click', "#UpSertPredefinedCategoryFormButton", function () {
+            //    var myformdata = $("#UpSertPredefinedCategoryForm").serialize();
+            //    $.ajax({
+            //        type: "POST",
+            //        url: "/PredefinedCategory/UpSert",
+            //        data: myformdata,
+            //        success: function () {
+            //            window.location.href = "/PredefinedCategory/Index";
+            //        },
+            //        error: function (errormessage) {
+            //            alert(errormessage.responseText);
+            //        }
+            //    })
+            //})
     </script>
-    
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
 }
