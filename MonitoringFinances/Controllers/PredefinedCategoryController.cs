@@ -23,7 +23,6 @@ namespace MonitoringFinances.Controllers
             return View(predefinedCategoryList);
         }
 
-        //Get - Insert and Update
         [HttpGet]
         public IActionResult UpSert(int? id)
         {
@@ -43,6 +42,7 @@ namespace MonitoringFinances.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Upsert(PredefinedCategory predefinedCategory)
         {
             if (ModelState.IsValid)
@@ -64,6 +64,32 @@ namespace MonitoringFinances.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return StatusCode(500);
+            }
+            else
+            {
+                PredefinedCategory predefinedCategory = _db.PredefinedCategory.Find(id);
+                if (predefinedCategory == null)
+                {
+                    return NotFound();
+                }
+                return PartialView("~/Views/PredefinedCategory/_Delete.cshtml", predefinedCategory);
+            }
+        }
 
+        [HttpPost,ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeletePost(int? id)
+        {
+            var obj = _db.PredefinedCategory.Find(id);
+            _db.PredefinedCategory.Remove(obj);
+            _db.SaveChanges();
+            return RedirectToAction("Index");
+        }
     }
 }

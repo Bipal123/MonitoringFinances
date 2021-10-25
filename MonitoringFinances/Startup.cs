@@ -66,6 +66,7 @@ namespace MonitoringFinances
 
         private static async Task CreateRolesAndTestAccounts(IServiceProvider serviceProvider)
         {
+
             var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var UserManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
             string[] roleNames = { WebConstant.AdminRole, WebConstant.StandardUserRole };
@@ -95,6 +96,10 @@ namespace MonitoringFinances
                 if (createAdminResult.Succeeded)
                     await UserManager.AddToRoleAsync(adminTest, WebConstant.AdminRole);
             }
+
+            //var SignInManager = serviceProvider.GetRequiredService<SignInManager<IdentityUser>>();
+            //await SignInManager.PasswordSignInAsync(WebConstant.TestAdminEmail, WebConstant.TestAdminPassword, true, lockoutOnFailure: false);
+
             var _standardUserTest = await UserManager.FindByEmailAsync(WebConstant.TestStandardUserEmail);
             if (_standardUserTest == null)
             {
