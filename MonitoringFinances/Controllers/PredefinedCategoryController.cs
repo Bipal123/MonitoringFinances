@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MonitoringFinances.Data;
 using MonitoringFinances.Models.AdminModels;
 using System;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace MonitoringFinances.Controllers
 {
+    [Authorize(Roles = WebConstant.AdminRole)]
     public class PredefinedCategoryController : Controller
     {
         private readonly ApplicationDbContext _db;
