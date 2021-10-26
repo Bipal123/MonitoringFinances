@@ -17,6 +17,7 @@ namespace MonitoringFinances.Data
 
         }
         public DbSet<ApplicationUser> ApplicationUser { get; set; }
-        public DbSet<PredefinedCategory> PredefinedCategory { get; set; } 
+        public DbSet<PredefinedCategory> PredefinedCategory { get; set; }
+        public DbSet<Category> Category { get; set; }
     }
 }
