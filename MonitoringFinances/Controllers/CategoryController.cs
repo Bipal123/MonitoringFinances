@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using MonitoringFinances.Data;
 using MonitoringFinances.Models;
 using MonitoringFinances.Models.Identity;
-using MonitoringFinances.Models.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -90,6 +89,34 @@ namespace MonitoringFinances.Controllers
             {
                 return StatusCode(500);
             }
+        }
+
+        [HttpGet]
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return StatusCode(500);
+            }
+            else
+            {
+                Category category = _db.Category.Find(id);
+                if (category == null)
+                {
+                    return NotFound();
+                }
+                return PartialView("~/Views/Category/_Delete.cshtml", category);
+            }
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeletePost(int? id)
+        {
+            var obj = _db.Category.Find(id);
+            _db.Category.Remove(obj);
+            _db.SaveChanges();
+            return RedirectToAction("Index");
         }
     }
 }

@@ -1,0 +1,6 @@
+﻿@model MonitoringFinances.Models.Category
+
+<form asp-controller="Category" asp-action="Delete" id="DeleteCategoryForm">
+    <input type="hidden" asp-for="Id" />
+    <p class="lead">Do you want to delete category: <strong>@Model.Name</strong>?</p>
+</form>

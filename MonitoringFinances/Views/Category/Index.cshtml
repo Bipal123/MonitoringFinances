@@ -112,7 +112,7 @@
         }
 
         var Delete = function (Id) {
-            var url = "/PredefinedCategory/Delete?Id=" + Id;
+            var url = "/Category/Delete?Id=" + Id;
             $("#DeleteCategoryModalBody").load(url, function () {
                 $("#DeleteCategoryModal").modal("show");
             });
