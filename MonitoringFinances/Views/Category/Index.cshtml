@@ -1,4 +1,4 @@
-﻿@model MonitoringFinances.Models.ViewModel.CategoryVM
+﻿@model IEnumerable<MonitoringFinances.Models.Category>
 
 @{
     int counter = 1;
@@ -17,7 +17,7 @@
         </div>
     </div>
     <div class="row my-3">
-        @if (Model.categories.Count() > 0)
+        @if (Model.Count() > 0)
         {
             <div class="row my-3">
                 <div class="d-flex align-items-center">
@@ -26,17 +26,15 @@
                             <tr>
                                 <th scope="col" class="fs-5">#</th>
                                 <th scope="col" class="fs-5">Name</th>
-                                <th scope="col" class="fs-5">Account</th>
                                 <th scope="col" class="fs-5">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var category in Model.categories)
+                            @foreach (var category in Model)
                             {
                             <tr>
                                 <th scope="row" class="fs-5">@counter</th>
                                 <td class="fs-5">@category.Name</td>
-                                <th scope="col" class="fs-5">@category.ApplicationUser.FirstName</th>
                                 <td class="text-center">
                                     <div class="w-50 btn-group" role="group">
                                         <a onclick="UpSert(@category.Id)" class="btn btn-primary mx-2">
@@ -58,7 +56,7 @@
         else
         {
             <div class="col p-3">
-                <p class="lead">No Category Exists for @Model.currentUser.FirstName!</p>
+                <p class="lead">No Category Exists!</p>
             </div>
         }
     </div>
@@ -69,10 +67,11 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <p class="h5 modal-title" id="modal-title">Create Predefined Category</p>
+                <p class="h5 modal-title" id="modal-title">Create Category</p>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="UpSertCategoryModalBody">
+                <!--This is where my form data will go-->
             </div>
             <div class="modal-footer d-flex justify-content-center">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -91,6 +90,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="DeleteCategoryModalBody">
+                <!--This is where my form data will go-->
             </div>
             <div class="modal-footer d-flex justify-content-center">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -103,9 +103,9 @@
 @section Scripts {
     <script>
         var UpSert = function (Id) {
-            var url = "/PredefinedCategory/UpSert?Id=" + Id;
+            var url = "/Category/UpSert/" + Id;
             if (Id > 0)
-                $('#modal-title').html("Edit Predefined Category");
+                $('#modal-title').html("Edit Category");
             $("#UpSertCategoryModalBody").load(url, function () {
                 $("#UpSertCategoryModal").modal("show");
             });

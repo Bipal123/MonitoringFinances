@@ -30,24 +30,66 @@ namespace MonitoringFinances.Controllers
             _signInManager = signInManager;
         }
 
-        public async Task<IActionResult> IndexAsync()
+        public async Task<IActionResult> Index()
         {
             //Get current user
-            ApplicationUser currentUser = (ApplicationUser)await _userManager.GetUserAsync(User);
+            ApplicationUser currentUser = (ApplicationUser) await _userManager.GetUserAsync(User);
             if (currentUser == null)
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
             
             IEnumerable<Category> categoriesForCurUser = _db.Category.Include(u => u.ApplicationUser).Where(u => u.ApplicationUser.Id == currentUser.Id);
-
-            CategoryVM categoryVM = new CategoryVM()
+            return View(categoriesForCurUser);
+        }
+        
+        [HttpGet]
+        public IActionResult UpSert(int id)
+        {
+            if (id == 0)
             {
-                categories = categoriesForCurUser,
-                currentUser = currentUser,
-                upSertCategory = new Category()
-            }; 
-            return View(categoryVM);
+                Category category = new Category();
+                return PartialView("~/Views/Category/_Upsert.cshtml", category);
+            }
+            else
+            {
+                Category category = _db.Category.Find(id);
+                if (category == null)
+                {
+                    return NotFound();
+                }
+                return PartialView("~/Views/Category/_Upsert.cshtml", category);
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpSert(Category category)
+        {
+            if (ModelState.IsValid)
+            {
+                ApplicationUser currentUser = (ApplicationUser) await _userManager.GetUserAsync(User);
+                if (currentUser == null)
+                {
+                    return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                }
+                string userId = currentUser.Id;
+                category.UserId = userId;
+                if (category.Id == 0)
+                {
+                    _db.Category.Add(category);
+                }
+                else
+                {
+                    _db.Category.Update(category);
+                }
+                _db.SaveChanges();
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                return StatusCode(500);
+            }
         }
     }
 }
