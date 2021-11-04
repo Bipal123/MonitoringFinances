@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MonitoringFinances.Data;
 using MonitoringFinances.Models;
 using MonitoringFinances.Models.Identity;
+using MonitoringFinances.Models.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,26 +40,34 @@ namespace MonitoringFinances.Controllers
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
             
-            IEnumerable<Category> categoriesForCurUser = _db.Category.Include(u => u.ApplicationUser).Where(u => u.ApplicationUser.Id == currentUser.Id);
+            IEnumerable<Category> categoriesForCurUser = _db.Category.Include(u => u.ApplicationUser).Where(u => u.ApplicationUser.Id == currentUser.Id).Include(u => u.CategoryType);
             return View(categoriesForCurUser);
         }
         
         [HttpGet]
         public IActionResult UpSert(int id)
         {
+            CategoryVM categoryVM = new CategoryVM()
+            {
+                Category = new Category(),
+                CategoryTypeSelectList = _db.CategoryType.Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                }),
+            }; 
             if (id == 0)
             {
-                Category category = new Category();
-                return PartialView("~/Views/Category/_Upsert.cshtml", category);
+                return PartialView("~/Views/Category/_Upsert.cshtml", categoryVM);
             }
             else
             {
-                Category category = _db.Category.Find(id);
-                if (category == null)
+                categoryVM.Category = _db.Category.Find(id);
+                if (categoryVM.Category == null)
                 {
                     return NotFound();
                 }
-                return PartialView("~/Views/Category/_Upsert.cshtml", category);
+                return PartialView("~/Views/Category/_Upsert.cshtml", categoryVM);
             }
         }
 
@@ -72,8 +82,7 @@ namespace MonitoringFinances.Controllers
                 {
                     return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
                 }
-                string userId = currentUser.Id;
-                category.UserId = userId;
+                category.UserId = currentUser.Id;
                 if (category.Id == 0)
                 {
                     _db.Category.Add(category);

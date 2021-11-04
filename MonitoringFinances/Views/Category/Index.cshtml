@@ -26,6 +26,7 @@
                             <tr>
                                 <th scope="col" class="fs-5">#</th>
                                 <th scope="col" class="fs-5">Name</th>
+                                <th scope="col" class="fs-5">Type</th>
                                 <th scope="col" class="fs-5">Action</th>
                             </tr>
                         </thead>
@@ -35,6 +36,7 @@
                             <tr>
                                 <th scope="row" class="fs-5">@counter</th>
                                 <td class="fs-5">@category.Name</td>
+                                <td class="fs-5">@category.CategoryType.Name</td>
                                 <td class="text-center">
                                     <div class="w-50 btn-group" role="group">
                                         <a onclick="UpSert(@category.Id)" class="btn btn-primary mx-2">
@@ -86,7 +88,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <p class="h6 modal-title" id="modal-title">Delete Predefined Category</p>
+                <p class="h6 modal-title" id="modal-title">Delete Category</p>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="DeleteCategoryModalBody">
