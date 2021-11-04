@@ -89,6 +89,10 @@ namespace MonitoringFinances.Controllers
         public IActionResult DeletePost(int? id)
         {
             var obj = _db.PredefinedCategory.Find(id);
+            if (obj == null)
+            {
+                return NotFound();
+            }
             _db.PredefinedCategory.Remove(obj);
             _db.SaveChanges();
             return RedirectToAction("Index");
