@@ -1,4 +1,5 @@
-﻿using MonitoringFinances.Models.Identity;
+﻿using MonitoringFinances.Models.AdminModels;
+using MonitoringFinances.Models.Identity;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -17,5 +18,9 @@ namespace MonitoringFinances.Models
         public string UserId { get; set; }
         [ForeignKey("UserId")]
         public virtual ApplicationUser ApplicationUser { get; set; }
+        [Display(Name ="Type")]
+        public int CategoryTypeId { get; set; }
+        [ForeignKey("CategoryTypeId")]
+        public virtual CategoryType CategoryType { get; set; }
     }
 }
