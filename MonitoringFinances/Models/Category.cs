@@ -13,14 +13,18 @@ namespace MonitoringFinances.Models
     {
         [Key]
         public int Id { get; set; }
+        
         [Required]
         public string Name { get; set; }
+        
         public string UserId { get; set; }
-        [ForeignKey("UserId")]
-        public virtual ApplicationUser ApplicationUser { get; set; }
+        
         [Display(Name ="Type")]
         public int CategoryTypeId { get; set; }
+        
         [ForeignKey("CategoryTypeId")]
         public virtual CategoryType CategoryType { get; set; }
+        [ForeignKey("UserId")]
+        public virtual ApplicationUser ApplicationUser { get; set; }
     }
 }
