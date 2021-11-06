@@ -17,26 +17,10 @@ namespace MonitoringFinances.Data
 
         }
 
-        protected override void OnModelCreating(ModelBuilder builder)
-        {
-            builder.Entity<CategoryType>().HasData(
-                new CategoryType
-                {
-                    Id = 1,
-                    Name = "Income"
-                },
-                new CategoryType
-                {
-                    Id = 2,
-                    Name = "Expense"
-                }
-                );
-            base.OnModelCreating(builder);
-        }
-
         public DbSet<ApplicationUser> ApplicationUser { get; set; }
         public DbSet<PredefinedCategory> PredefinedCategory { get; set; }
         public DbSet<Category> Category { get; set; }
         public DbSet<CategoryType> CategoryType { get; set; }
+        public DbSet<Transaction> Transaction { get; set; }
     }
 }
