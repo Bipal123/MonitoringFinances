@@ -21,6 +21,10 @@
             <span asp-validation-for="Category.CategoryTypeId" class="text-danger"></span>
         </div>
     </div>
+    @if (Model.Category.Id != 0)
+    {
+        <p class="text-warning" style="color: #E89805 !important">Warning: Changing type will also move associated transactions!</p>
+    }
 </form>
 
 <!--Required Scripts and Stuff-->

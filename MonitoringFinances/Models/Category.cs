@@ -16,7 +16,6 @@ namespace MonitoringFinances.Models
         
         [Required]
         public string Name { get; set; }
-        
         public string UserId { get; set; }
         
         [Display(Name ="Type")]

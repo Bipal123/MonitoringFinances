@@ -97,16 +97,13 @@ namespace MonitoringFinances
                     await UserManager.AddToRoleAsync(adminTest, WebConstant.AdminRole);
             }
 
-            //var SignInManager = serviceProvider.GetRequiredService<SignInManager<IdentityUser>>();
-            //await SignInManager.PasswordSignInAsync(WebConstant.TestAdminEmail, WebConstant.TestAdminPassword, true, lockoutOnFailure: false);
-
             var _standardUserTest = await UserManager.FindByEmailAsync(WebConstant.TestStandardUserEmail);
             if (_standardUserTest == null)
             {
                 var standardUserTest = new ApplicationUser
                 {
                     UserName = WebConstant.TestStandardUserEmail,
-                    Email = WebConstant.TestStandardUserPassword,
+                    Email = WebConstant.TestStandardUserEmail,
                     FirstName = "StandardUser",
                     LastName = "Account"
                 };
