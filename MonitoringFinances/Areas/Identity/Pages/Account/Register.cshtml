@@ -41,7 +41,7 @@
             @if (User.IsInRole(WebConstant.AdminRole)) {
             <div class="form-group">
                 <label asp-for="Input.AssignedRole"></label>
-                <select asp-for="Input.AssignedRole" asp-items="@Model.AllRoles" class="form-control">
+                <select asp-for="Input.AssignedRole" asp-items="@Model.AllRoles" class="form-control" required>
                     <option disabled selected>--Select Role--</option>
                 </select>
                 <span asp-validation-for="Input.AssignedRole" class="text-danger"></span>

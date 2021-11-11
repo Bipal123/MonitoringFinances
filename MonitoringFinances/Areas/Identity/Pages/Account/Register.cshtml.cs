@@ -77,7 +77,6 @@ namespace MonitoringFinances.Areas.Identity.Pages.Account
             [Display(Name = "Last Name")]
             public string LastName { get; set; }
 
-            [Required]
             [Display(Name = "Role")]
             public string AssignedRole { get; set; }
         }
