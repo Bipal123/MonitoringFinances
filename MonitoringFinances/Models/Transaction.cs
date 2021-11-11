@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace MonitoringFinances.Models
 {
+    [Table("Record")]
     public class Transaction
     {
         [Key]
@@ -18,12 +19,9 @@ namespace MonitoringFinances.Models
         public decimal Amount { get; set; }
         [Required]
         public DateTime Date { get; set; }
-        public string UserId { get; set; }
         public string Description { get; set; }
         [Display(Name = "Category")]
         public int CategoryId { get; set; }
-        [ForeignKey("UserId")]
-        public virtual ApplicationUser ApplicationUser { get; set; }
         [ForeignKey("CategoryId")]
         public virtual Category Category { get; set; }
     }
