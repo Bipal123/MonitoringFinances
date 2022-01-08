@@ -1,6 +1,6 @@
 USE [MonitoringFinancesDb-Local]
 GO
-SELECT Record.Id, Record.Amount, Record.Date, Record.Description, Category.Name, CategoryType.Name, AspNetUsers.UserName
+SELECT Record.Id, Record.Amount, Record.Date, Record.Description, Category.Name as 'Category', CategoryType.Name as 'CategoryType', AspNetUsers.UserName
 FROM dbo.Record 
 	INNER JOIN dbo.Category ON Record.CategoryId = Category.Id
 	INNER JOIN dbo.AspNetUsers ON Category.UserId = AspNetUsers.Id
