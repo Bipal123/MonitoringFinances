@@ -1,0 +1,38 @@
+﻿@model MonitoringFinances.Models.Transaction
+
+<form asp-controller="Transaction" asp-action="Detail" id="DetailTransactionForm">
+    <div class="row mb-3">
+        <label asp-for="Amount" class="col-sm-2 col-form-label me-sm-3">Amount</label>
+        <div class="col-sm-9">
+            <input type="number" asp-for="Amount" class="form-control" id="Name" aria-describedby="Name" disabled>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label asp-for="Date" class="col-sm-2 col-form-label me-sm-3">Date</label>
+        <div class="col-sm-9">
+            <input type="date" asp-for="Date" class="form-control" id="Name" aria-describedby="Name" disabled>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label asp-for="Description" class="col-sm-2 col-form-label me-sm-3">Description</label>
+        <div class="col-sm-9">
+            <textarea asp-for="Description" class="form-control" id="Name" aria-describedby="Name" disabled></textarea>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label asp-for="Category.Name" class="col-sm-2 col-form-label me-sm-3">Category</label>
+        <div class="col-sm-9">
+            <input asp-for="Category.Name" class="form-control" id="Name" aria-describedby="Name" disabled>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label asp-for="Category.CategoryType.Name" class="col-sm-2 col-form-label me-sm-3">Type</label>
+        <div class="col-sm-9">
+            <input asp-for="Category.CategoryType.Name" class="form-control" id="Name" aria-describedby="Name" disabled>
+        </div>
+    </div>
+</form>
+
+<!--Required Scripts and Stuff-->
+<link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.css" />
+

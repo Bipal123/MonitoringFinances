@@ -38,9 +38,28 @@ namespace MonitoringFinances.Controllers
             foreach (Transaction transaction in transactionsForCurUser)
             {
                 transaction.Category.CategoryType = _db.CategoryType.Where(u => u.Id == transaction.Category.CategoryTypeId).FirstOrDefault();
-                transaction.Category.ApplicationUser = _db.ApplicationUser.Where(u => u.Id == currentUser.Id).FirstOrDefault();
             };
             return View(transactionsForCurUser);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DetailAsync(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return StatusCode(500);
+            }
+            else
+            {
+                ApplicationUser currentUser = (ApplicationUser)await _userManager.GetUserAsync(User);
+                Transaction transaction = _db.Transaction.Include(u => u.Category).Where(u => u.Category.ApplicationUser.Id == currentUser.Id).Where(u => u.Id == id).FirstOrDefault();
+                transaction.Category.CategoryType = _db.CategoryType.Find(transaction.Category.CategoryTypeId);
+                if (transaction == null)
+                {
+                    return NotFound();
+                }
+                return PartialView("~/Views/Transaction/_Detail.cshtml", transaction);
+            }
         }
     }
 }

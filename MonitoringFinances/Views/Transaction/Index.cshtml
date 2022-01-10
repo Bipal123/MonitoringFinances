@@ -29,31 +29,32 @@
                                 <th scope="col" class="fs-5">Date</th>
                                 <th scope="col" class="fs-5">Category</th>
                                 <th scope="col" class="fs-5">Type</th>
-                                <th scope="col" class="fs-5">Owner's Username</th>
                                 <th scope="col" class="fs-5">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var transaction in Model)
                             {
-                            <tr>
-                                <th scope="row" class="fs-5">@counter</th>
-                                <td class="fs-5">@transaction.Amount</td>
-                                <td class="fs-5">@transaction.Date</td>
-                                <td class="fs-5">@transaction.Category.Name</td>
-                                <td class="fs-5">@transaction.Category.CategoryType.Name</td>
-                                <td class="fs-5">@transaction.Category.ApplicationUser.UserName</td>
-                                <td class="text-center">
-                                    <div class="w-50 btn-group" role="group">
-                                        <a onclick="UpSert(@transaction.Id)" class="btn btn-primary mx-2">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a onclick="Delete(@transaction.Id)" class="btn btn-danger mx-2">
-                                            <i class="far fa-trash-alt"></i>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
+                                <tr>
+                                    <th scope="row" class="fs-5">@counter</th>
+                                    <td class="fs-5">@String.Format("{0:c}", transaction.Amount)</td>
+                                    <td class="fs-5">@String.Format("{0:MMM d, yyyy}", transaction.Date)</td>
+                                    <td class="fs-5">@transaction.Category.Name</td>
+                                    <td class="fs-5">@transaction.Category.CategoryType.Name</td>
+                                    <td class="text-center">
+                                        <div class="w-50 btn-group" role="group">
+                                            <a onclick="Detail(@transaction.Id)" class="btn btn-primary mx-2">
+                                                <i class="fas fa-info-circle"></i>
+                                            </a>
+                                            <a onclick="UpSert(@transaction.Id)" class="btn btn-primary mx-2">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a onclick="Delete(@transaction.Id)" class="btn btn-danger mx-2">
+                                                <i class="far fa-trash-alt"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
                                 counter++;
                             }
                         </tbody>
@@ -67,6 +68,24 @@
                 <p class="lead">No Transaction Exists!</p>
             </div>
         }
+    </div>
+</div>
+
+<!--Detail Transaction Modal-->
+<div class="modal fade" id="DetailTransactionModal" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p class="h5 modal-title" id="modal-title"></p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="DetailTransactionModalBody">
+                <!--This is where my form data will go-->
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -110,6 +129,14 @@
 
 @section Scripts {
     <script>
+        var Detail = function (Id) {
+            var url = "/Transaction/Detail/" + Id;
+            $('#modal-title').html("Details for Transaction #" + Id);
+            $("#DetailTransactionModalBody").load(url, function () {
+                $("#DetailTransactionModal").modal("show");
+            });
+        }
+
         var UpSert = function (Id) {
             var url = "/Category/UpSert/" + Id;
             if (Id > 0)
