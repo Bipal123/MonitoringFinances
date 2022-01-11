@@ -64,6 +64,72 @@ namespace MonitoringFinances.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult UpSert(int? id, bool? isIncome)
+        {
+            if (id == null || isIncome == null)
+            {
+                return StatusCode(500);
+            }
+            IEnumerable<SelectListItem> subCategories;
+            if ((bool) isIncome)
+            {
+                subCategories = _db.Category.Where(u => u.CategoryType.Name.Equals("Income")).Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                });
+            }
+            else
+            {
+                subCategories = _db.Category.Where(u => u.CategoryType.Name.Equals("Expense")).Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                });
+            }
+            TransactionVM transactionVM = new TransactionVM()
+            {
+                Transaction = new Transaction(),
+                SubCategories = subCategories
+            };
+            if (id == 0)
+            {
+                return PartialView("~/Views/Transaction/_Upsert.cshtml", transactionVM);
+            }
+            else
+            {
+                transactionVM.Transaction = _db.Transaction.Find(id);
+                if (transactionVM.Transaction == null)
+                {
+                    return NotFound();
+                }
+                return PartialView("~/Views/Transaction/_Upsert.cshtml", transactionVM);
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult UpSert(Transaction transaction)
+        {
+            if (ModelState.IsValid)
+            {
+                if (transaction.Id == 0)
+                {
+                    _db.Transaction.Add(transaction);
+                }
+                else
+                {
+                    _db.Transaction.Update(transaction);
+                }
+                _db.SaveChanges();
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                return StatusCode(500);
+            }
+        }
 
         [HttpGet]
         public IActionResult Delete(int? id)
