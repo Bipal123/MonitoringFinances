@@ -76,7 +76,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <p class="h5 modal-title" id="modal-title"></p>
+                <p class="h5 modal-title" id="detail-modal-title"></p>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="DetailTransactionModalBody">
@@ -94,7 +94,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <p class="h5 modal-title" id="modal-title">Create Category</p>
+                <p class="h5 modal-title" id="upsert-modal-title">Create Category</p>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="UpSertCategoryModalBody">
@@ -109,19 +109,19 @@
 </div>
 
 <!--Delete Category Modal-->
-<div class="modal fade" id="DeleteCategoryModal" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" id="DeleteTransactionModal" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <p class="h6 modal-title" id="modal-title">Delete Category</p>
+                <p class="h5 modal-title" id="delete-modal-title"></p>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" id="DeleteCategoryModalBody">
+            <div class="modal-body" id="DeleteTransactionModalBody">
                 <!--This is where my form data will go-->
             </div>
             <div class="modal-footer d-flex justify-content-center">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button id="DeleteCategoryFormButton" form="DeleteCategoryForm" type="submit" class="btn btn-danger">Delete</button>
+                <button id="DeleteTransactionFormButton" form="DeleteTransactionForm" type="submit" class="btn btn-danger">Delete</button>
             </div>
         </div>
     </div>
@@ -131,7 +131,7 @@
     <script>
         var Detail = function (Id) {
             var url = "/Transaction/Detail/" + Id;
-            $('#modal-title').html("Details for Transaction #" + Id);
+            $('#detail-modal-title').html("Details for Transaction #" + Id);
             $("#DetailTransactionModalBody").load(url, function () {
                 $("#DetailTransactionModal").modal("show");
             });
@@ -147,9 +147,10 @@
         }
 
         var Delete = function (Id) {
-            var url = "/Category/Delete?Id=" + Id;
-            $("#DeleteCategoryModalBody").load(url, function () {
-                $("#DeleteCategoryModal").modal("show");
+            var url = "/Transaction/Delete/" + Id;
+            $('#delete-modal-title').html("Delete Transaction #" + Id);
+            $("#DeleteTransactionModalBody").load(url, function () {
+                $("#DeleteTransactionModal").modal("show");
             });
         }
     </script>

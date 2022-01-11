@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MonitoringFinances.Data;
 using MonitoringFinances.Models;
 using MonitoringFinances.Models.Identity;
+using MonitoringFinances.Models.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,6 +62,35 @@ namespace MonitoringFinances.Controllers
                 }
                 return PartialView("~/Views/Transaction/_Detail.cshtml", transaction);
             }
+        }
+
+
+        [HttpGet]
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return StatusCode(500);
+            }
+            else
+            {
+                Transaction transaction = _db.Transaction.Find(id);
+                if (transaction == null)
+                {
+                    return NotFound();
+                }
+                return PartialView("~/Views/Transaction/_Delete.cshtml", transaction);
+            }
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeletePost(int? id)
+        {
+            var obj = _db.Transaction.Find(id);
+            _db.Transaction.Remove(obj);
+            _db.SaveChanges();
+            return RedirectToAction("Index");
         }
     }
 }
