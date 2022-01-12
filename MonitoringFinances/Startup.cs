@@ -36,6 +36,8 @@ namespace MonitoringFinances
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
         {
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NTY0MTE5QDMxMzkyZTM0MmUzMEE1OTM4R01nU0dQYmNRV01tWVNsTFRtUDM2VUNOcnh0ODM2dWtXTnVvcTg9");
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
