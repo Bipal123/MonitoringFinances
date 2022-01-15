@@ -1,6 +1,10 @@
-﻿@model IEnumerable<MonitoringFinances.Models.Transaction>
+﻿@model MonitoringFinances.Models.ViewModel.TransactionAllVM
 @using Syncfusion.EJ2
-
+<style>
+    .e-grid * {
+        font-size: 15px !important;
+    }
+</style>
 <div class="container">
     <div class="row my-3">
         <div class="col-12 col-md-6 p-3 ">
@@ -22,30 +26,50 @@
     </div>
     <div class="row my-3">
         <div class="col-md-6">
-            @if (Model.Count() > 0)
+            @if (Model.incomeRecords.Count() > 0)
             {
-                <ejs-grid id="Grid" width="670" dataSource="Model" rowDataBound="rowDataBound" allowPaging="true" allowResizing="true">
+                <ejs-grid id="IncomeGrid" dataSource="Model.incomeRecords" rowDataBound="rowDataBound" allowPaging="true" allowResizing="true" enableStickyHeader="true" allowSorting="true" allowFiltering="true" rowHeight="45">
+                    @*<e-grid-groupSettings enableLazyLoading="true"></e-grid-groupSettings>*@
+                    <e-grid-filtersettings type="Excel" immediateModeDelay="1500" showFilterBarOperator="true"></e-grid-filtersettings>
                     <e-grid-pagesettings pageSize="10" pageSizes="@(new string[] { "5", "10", "20", "50", "All" })"></e-grid-pagesettings>
                     <e-grid-columns>
-                        <e-grid-column headerText="#" textAlign="Center" width="80"></e-grid-column>
-                        <e-grid-column field="Amount" headerText="Amount" textAlign="Center" format="C2" width="100"></e-grid-column>
-                        <e-grid-column field="Date" headerText=" Date" format="MMM d, yyyy" width="130"></e-grid-column>
-                        <e-grid-column field="Category.Name" headerText=" Category" width="130"></e-grid-column>
-                        <e-grid-column headerText="Action" textAlign="Center" template="${incomeAction(data)}" width="200"></e-grid-column>
+                        <e-grid-column headerText="#" headerTemplate="#SnTemplate" textAlign="Center" width="60"></e-grid-column>
+                        <e-grid-column field="Amount" headerTemplate="#AmountTemplate" textAlign="Left" format="C2" width="100"></e-grid-column>
+                        <e-grid-column field="Date" headerTemplate="#DateTemplate" headerText=" Date" format="MMM d, yyyy" width="130"></e-grid-column>
+                        <e-grid-column field="Category.Name" headerTemplate="#CategoryTemplate" headerText=" Category" width="130"></e-grid-column>
+                        <e-grid-column headerText="Action" headerTemplate="#ActionTemplate" textAlign="Center" template="${recordAction(data)}" width="200"></e-grid-column>
                     </e-grid-columns>
                 </ejs-grid>
             }
             else
             {
                 <div class="col p-3">
-                    <p class="lead">No Transaction Exists!</p>
+                    <p class="lead">No Income Record Exists!</p>
                 </div>
             }
         </div>
         <div class="col-md-6">
-            @{
-                //next table goes here
-             }
+            @if (Model.expenseRecords.Count() > 0)
+            {
+                <ejs-grid id="ExpenseGrid" dataSource="Model.expenseRecords" rowDataBound="rowDataBound" allowPaging="true" allowResizing="true" enableStickyHeader="true" allowSorting="true" allowFiltering="true" rowHeight="45">
+                    @*<e-grid-groupSettings enableLazyLoading="true"></e-grid-groupSettings>*@
+                    <e-grid-filtersettings type="Excel" immediateModeDelay="1500" showFilterBarOperator="true"></e-grid-filtersettings>
+                    <e-grid-pagesettings pageSize="10" pageSizes="@(new string[] { "5", "10", "20", "50", "All" })"></e-grid-pagesettings>
+                    <e-grid-columns>
+                        <e-grid-column headerText="#" headerTemplate="#SnTemplate" textAlign="Center" width="60"></e-grid-column>
+                        <e-grid-column field="Amount" headerTemplate="#AmountTemplate" textAlign="Left" format="C2" width="100"></e-grid-column>
+                        <e-grid-column field="Date" headerTemplate="#DateTemplate" headerText=" Date" format="MMM d, yyyy" width="130"></e-grid-column>
+                        <e-grid-column field="Category.Name" headerTemplate="#CategoryTemplate" headerText=" Category" width="130"></e-grid-column>
+                        <e-grid-column headerText="Action" headerTemplate="#ActionTemplate" textAlign="Center" template="${recordAction(data)}" width="200"></e-grid-column>
+                    </e-grid-columns>
+                </ejs-grid>
+            }
+            else
+            {
+                <div class="col p-3">
+                    <p class="lead">No Expense Record Exists!</p>
+                </div>
+            }
         </div>
     </div>
 </div>
@@ -108,7 +132,7 @@
 
 @section Scripts {
     <script>
-        
+
 
         var Detail = function (Id) {
             var url = "/Transaction/Detail/" + Id;
@@ -145,18 +169,18 @@
         }
     </script>
     <script type="text/javascript">
-        window.incomeAction = function (args) {
+        window.recordAction = function (args) {
             var element;
             var isIncome = args['Category'].CategoryType.Name.localeCompare("Income") === 0 ? true : false;
             console.log(isIncome);
             element = '<div class="w-50" role="group">'
-                + '<a onclick="Detail(' + args['Id'] + ')" class="btn btn-outline-secondary btn-sm mx-2">'
+                + '<a style="font-size: 14px !important;" onclick="Detail(' + args['Id'] + ')" class="btn btn-outline-secondary btn-sm mx-2">'
                 + '<i class="fas fa-info-circle"></i>'
                 + '</a>'
-                + '<a onclick="UpSert(' + args['Id'] + ',' + isIncome + ') ' + '" class="btn btn-outline-primary btn-sm mx-2">'
+                + '<a style="font-size: 14px !important;" onclick="UpSert(' + args['Id'] + ',' + isIncome + ') ' + '" class="btn btn-outline-primary btn-sm mx-2">'
                 + '<i class="fas fa-edit"></i>'
                 + '</a>'
-                + '<a onclick="Delete(' + args['Id'] + ')" class="btn btn-outline-danger btn-sm mx-2">'
+                + '<a style="font-size: 14px !important;" onclick="Delete(' + args['Id'] + ')" class="btn btn-outline-danger btn-sm mx-2">'
                 + '<i class="far fa-trash-alt"></i>'
                 + '</a>'
                 + '</div>';
@@ -173,5 +197,20 @@
                 args.row.querySelector('td').innerText = +args.row.getAttribute('aria-rowindex') + 1 + num;
             }
         }
+    </script>
+    <script id="SnTemplate" type="text/x-template">
+        <p style="margin: auto; font-size: 25px !important;" class="fw-bold">#</p>
+    </script>
+    <script id="AmountTemplate" type="text/x-template">
+        <p style="margin: auto; font-size: 25px !important; text-align: center;" class="fw-bold"><i style="font-size: 25px !important;" class="far fa-money-bill-alt"></i></p>
+    </script>
+    <script id="DateTemplate" type="text/x-template">
+        <p style="margin: auto; font-size: 25px !important; text-align: center;" class="fs-6 fw-bold"><i style="font-size: 25px !important;" class="far fa-calendar-alt"></i></p>
+    </script>
+    <script id="CategoryTemplate" type="text/x-template">
+        <p style="margin: auto;" class="fs-6 fw-bold">Category</p>
+    </script>
+    <script id="ActionTemplate" type="text/x-template">
+        <p style="margin:auto;" class="fs-6 fw-bold">Action</p>
     </script>
 }
