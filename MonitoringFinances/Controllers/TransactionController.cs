@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace MonitoringFinances.Controllers
 {
+    [Authorize]
     public class TransactionController : Controller
     {
         private readonly ApplicationDbContext _db;
@@ -36,12 +38,20 @@ namespace MonitoringFinances.Controllers
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
+            
             IEnumerable<Transaction> transactionsForCurUser = _db.Transaction.Include(u => u.Category).Where(u => u.Category.ApplicationUser.Id == currentUser.Id);
             foreach (Transaction transaction in transactionsForCurUser)
             {
                 transaction.Category.CategoryType = _db.CategoryType.Where(u => u.Id == transaction.Category.CategoryTypeId).FirstOrDefault();
             };
-            return View(transactionsForCurUser);
+            IEnumerable<Transaction> incomeRecords = transactionsForCurUser.Where(u => u.Category.CategoryType.Name.Equals("Income"));
+            IEnumerable<Transaction> expenseRecords = transactionsForCurUser.Where(u => u.Category.CategoryType.Name.Equals("Expense"));
+            TransactionAllVM transactionAllVM = new TransactionAllVM()
+            {
+                incomeRecords = incomeRecords,
+                expenseRecords = expenseRecords
+            };
+            return View(transactionAllVM);
         }
 
         [HttpGet]
@@ -88,7 +98,7 @@ namespace MonitoringFinances.Controllers
                     Value = i.Id.ToString()
                 });
             }
-            TransactionVM transactionVM = new TransactionVM()
+            TransactionSingleVM transactionVM = new TransactionSingleVM()
             {
                 Transaction = new Transaction(),
                 SubCategories = subCategories

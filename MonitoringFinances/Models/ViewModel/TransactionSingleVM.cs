@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MonitoringFinances.Models.ViewModel
 {
-    public class TransactionVM
+    public class TransactionSingleVM
     {
         public Transaction Transaction { get; set; }
         public IEnumerable<SelectListItem> SubCategories { get; set; }

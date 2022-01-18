@@ -1,81 +1,114 @@
-﻿@model IEnumerable<MonitoringFinances.Models.Transaction>
+﻿@model MonitoringFinances.Models.ViewModel.TransactionAllVM
+@using Syncfusion.EJ2
+<style>
+    .e-grid * {
+        font-size: 15px !important;
+    }
+    .e-grid .e-headercell, .e-grid .e-rowcell {
+        padding-left: 5px;
+    }
 
+    .e-grid .e-headercell {
+        padding-right: 15px;
+        text-align: center;
+    }
+
+    .e-grid .e-rowcell {
+        padding-right: 5px;
+    }
+    #IncomeGrid.e-grid .e-altrow {
+        /*background-color: #BFF285;*/
+        background-color: #c1ffa0;
+    }
+    #ExpenseGrid.e-grid .e-altrow {
+        background-color: #fccfce;
+    }
+</style>
 @{
-    int counter = 1;
+    List<object> sortOrder = new List<object>();
+    sortOrder.Add(new { field = "Date", direction = "Descending" });
 }
 <div class="container">
-    <div class="row my-3">
-        <div class="col-12 col-md-6 p-3 ">
-            <h1 class="display-5">
-                Transactions
-            </h1>
-        </div>
-        <div class="col-12 col-md-6 text-end d-flex align-items-center justify-content-md-end">
-            <div class="" role="group">
-                <a class="btn btn-success px-4 fs-5 mx-2" onclick="UpSert(0, true)">
-                    <i class="fas fa-plus"></i>&nbsp;Add Income
-                </a>
-                <a class="btn btn-danger px-4 fs-5 mx-2" onclick="UpSert(0, false)">
-                    <i class="fas fa-plus"></i>&nbsp;Add Expense
-                </a>
-            </div>
-            
-        </div>
+    <div class="row my-3 p-3 text-center">
+        <h1 class="display-4">
+            Transactions
+        </h1>
     </div>
     <div class="row my-3">
-        @if (Model.Count() > 0)
-        {
+        <div class="col-lg-6">
             <div class="row my-3">
-                <div class="d-flex align-items-center">
-                    <table class="table table-striped text-center align-middle">
-                        <thead>
-                            <tr>
-                                <th scope="col" class="fs-5">#</th>
-                                <th scope="col" class="fs-5">Amount</th>
-                                <th scope="col" class="fs-5">Date</th>
-                                <th scope="col" class="fs-5">Category</th>
-                                <th scope="col" class="fs-5">Type</th>
-                                <th scope="col" class="fs-5">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var transaction in Model)
-                            {
-                                //C# boolean is not recognized by my JS function, used this workaround for now
-                                String isIncome = transaction.Category.CategoryType.Name.Equals("Income") ? "true" : "false";
-                                <tr>
-                                    <th scope="row" class="fs-5">@counter</th>
-                                    <td class="fs-5">@String.Format("{0:c}", transaction.Amount)</td>
-                                    <td class="fs-5">@String.Format("{0:MMM d, yyyy}", transaction.Date)</td>
-                                    <td class="fs-5">@transaction.Category.Name</td>
-                                    <td class="fs-5">@transaction.Category.CategoryType.Name</td>
-                                    <td class="text-center">
-                                        <div class="w-50 btn-group" role="group">
-                                            <a onclick="Detail(@transaction.Id)" class="btn btn-primary mx-2">
-                                                <i class="fas fa-info-circle"></i>
-                                            </a>
-                                            <a onclick="UpSert(@transaction.Id, @isIncome)" class="btn btn-primary mx-2">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <a onclick="Delete(@transaction.Id)" class="btn btn-danger mx-2">
-                                                <i class="far fa-trash-alt"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                counter++;
-                            }
-                        </tbody>
-                    </table>
+                <div class="col-6 p-3 ">
+                    <h2 class="h3">
+                        Income
+                    </h2>
+                </div>
+                <div class="col-6 text-end d-flex align-items-center justify-content-md-end">
+                    <a class="btn btn-success px-4 fs-5 mx-2" onclick="UpSert(0, true)">
+                        <i class="fas fa-plus"></i>&nbsp;Add Income
+                    </a>
                 </div>
             </div>
-        }
-        else
-        {
-            <div class="col p-3">
-                <p class="lead">No Transaction Exists!</p>
+            <div class="row my-3">
+                @if (Model.incomeRecords.Count() > 0)
+                {
+                    <ejs-grid id="IncomeGrid" dataSource="Model.incomeRecords" rowDataBound="rowDataBound" allowPaging="true" allowResizing="true" enableStickyHeader="true" allowSorting="true" allowFiltering="true" rowHeight="45">
+                        <e-grid-filtersettings type="Excel" immediateModeDelay="1500" showFilterBarOperator="true"></e-grid-filtersettings>
+                        <e-grid-pagesettings pageCount="3" pageSize="12"></e-grid-pagesettings>
+                        <e-grid-sortsettings columns="sortOrder"></e-grid-sortsettings>
+                        <e-grid-columns>
+                            <e-grid-column headerText="#" headerTemplate="#SnTemplate" textAlign="Center" width="60"></e-grid-column>
+                            <e-grid-column field="Amount" headerTemplate="#AmountTemplate" textAlign="Center" format="C2" width="100"></e-grid-column>
+                            <e-grid-column field="Date" headerTemplate="#DateTemplate" textAlign="Center" headerText=" Date" format="MMM d, yyyy" width="130"></e-grid-column>
+                            <e-grid-column field="Category.Name" headerTemplate="#CategoryTemplate" textAlign="Center" headerText=" Category" width="130"></e-grid-column>
+                            <e-grid-column headerText="Action" headerTemplate="#ActionTemplate" textAlign="Center" template="${recordAction(data)}" width="150"></e-grid-column>
+                        </e-grid-columns>
+                    </ejs-grid>
+                 }
+                 else
+                 {
+                    <div class="col p-3">
+                        <p class="lead">No Income Record Exists!</p>
+                    </div>
+                 }
             </div>
-        }
+        </div>
+        <div class="col-lg-6">
+            <div class="row my-3">
+                <div class="col-6 p-3 ">
+                    <h2 class="h3">
+                        Expense
+                    </h2>
+                </div>
+                <div class="col-6 text-end d-flex align-items-center justify-content-md-end">
+                    <a class="btn btn-danger px-4 fs-5 mx-2" onclick="UpSert(0, false)">
+                        <i class="fas fa-plus"></i>&nbsp;Add Expense
+                    </a>
+                </div>
+            </div>
+            <div class="row my-3">
+                @if (Model.expenseRecords.Count() > 0)
+                {
+                    <ejs-grid id="ExpenseGrid" dataSource="Model.expenseRecords" rowDataBound="rowDataBound" allowPaging="true" allowResizing="true" enableStickyHeader="true" allowSorting="true" allowFiltering="true" rowHeight="45">
+                        <e-grid-filtersettings type="Excel" immediateModeDelay="1500" showFilterBarOperator="true"></e-grid-filtersettings>
+                        <e-grid-pagesettings pageCount="3" pageSize="12"></e-grid-pagesettings>
+                        <e-grid-sortsettings columns="sortOrder" ></e-grid-sortsettings>
+                        <e-grid-columns>
+                            <e-grid-column headerText="#" headerTemplate="#SnTemplate" textAlign="Center" width="60"></e-grid-column>
+                            <e-grid-column field="Amount" headerTemplate="#AmountTemplate" textAlign="Center" format="C2" width="100"></e-grid-column>
+                            <e-grid-column field="Date" headerTemplate="#DateTemplate" textAlign="Center" headerText=" Date" format="MMM d, yyyy" width="130"></e-grid-column>
+                            <e-grid-column field="Category.Name" headerTemplate="#CategoryTemplate" textAlign="Center" headerText=" Category" width="130"></e-grid-column>
+                            <e-grid-column headerText="Action" headerTemplate="#ActionTemplate" textAlign="Center" template="${recordAction(data)}" width="150"></e-grid-column>
+                        </e-grid-columns>
+                    </ejs-grid>
+                }
+                else
+                {
+                    <div class="col p-3">
+                        <p class="lead">No Expense Record Exists!</p>
+                    </div>
+                }
+            </div>
+        </div>
     </div>
 </div>
 
@@ -137,6 +170,8 @@
 
 @section Scripts {
     <script>
+
+
         var Detail = function (Id) {
             var url = "/Transaction/Detail/" + Id;
             $('#detail-modal-title').html("Details for Transaction #" + Id);
@@ -146,9 +181,7 @@
         }
 
         var UpSert = function (Id, isIncome) {
-            console.log("ID: " + Id + " --- isIncome: " + isIncome);
             var url = "/Transaction/UpSert?Id=" + Id + "&isIncome=" + isIncome;
-
             if (Id == 0 && isIncome == true)
                 $('#upsert-modal-title').html("Create Income");
             else if (Id == 0 && isIncome == false)
@@ -170,5 +203,49 @@
                 $("#DeleteTransactionModal").modal("show");
             });
         }
+    </script>
+    <script type="text/javascript">
+        window.recordAction = function (args) {
+            var element;
+            var isIncome = args['Category'].CategoryType.Name.localeCompare("Income") === 0 ? true : false;
+            element = '<div class="w-50" role="group">'
+                + '<a style="font-size: 14px !important;" onclick="Detail(' + args['Id'] + ')" class="btn btn-secondary btn-sm mx-2" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details">'
+                + '<i class="fas fa-info-circle"></i>'
+                + '</a>'
+                + '<a style="font-size: 14px !important;" onclick="UpSert(' + args['Id'] + ',' + isIncome + ') ' + '" class="btn btn-primary btn-sm mx-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">'
+                + '<i class="fas fa-edit"></i>'
+                + '</a>'
+                + '<a style="font-size: 14px !important;" onclick="Delete(' + args['Id'] + ')" class="btn btn-danger btn-sm mx-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">'
+                + '<i class="far fa-trash-alt"></i>'
+                + '</a>'
+                + '</div>';
+            return element;
+        }
+    </script>
+    <script>
+        function rowDataBound(args) {
+            if (this.pagerModule.pagerObj.currentPage == 1) {
+                args.row.querySelector('td').innerText = +args.row.getAttribute('aria-rowindex') + 1;
+            }
+            else {
+                var num = (this.pagerModule.pagerObj.currentPage - 1) * this.pagerModule.pageSettings.pageSize;
+                args.row.querySelector('td').innerText = +args.row.getAttribute('aria-rowindex') + 1 + num;
+            }
+        }
+    </script>
+    <script id="SnTemplate" type="text/x-template">
+        <p style="margin: auto; font-size: 25px !important;" class="fw-bold">#</p>
+    </script>
+    <script id="AmountTemplate" type="text/x-template">
+        <p style="margin: auto; font-size: 25px !important;" class="fw-bold"><i style="font-size: 25px !important;" class="far fa-money-bill-alt"></i></p>
+    </script>
+    <script id="DateTemplate" type="text/x-template">
+        <p style="margin: auto; font-size: 25px !important;" class="fs-6 fw-bold"><i style="font-size: 25px !important;" class="far fa-calendar-alt"></i></p>
+    </script>
+    <script id="CategoryTemplate" type="text/x-template">
+        <p style="margin: auto;" class="fs-6 fw-bold">Category</p>
+    </script>
+    <script id="ActionTemplate" type="text/x-template">
+        <p style="margin:auto;" class="fs-6 fw-bold">Action</p>
     </script>
 }
