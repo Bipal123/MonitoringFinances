@@ -16,7 +16,8 @@ namespace MonitoringFinances.Models.ViewModel
 
         public IEnumerable<Transaction> recordsByType;
 
-        public IList<PieChartData> pieChartData;
+        public List<PieChartData> pieChartData;
 
+        public string categoryType;
     }
 }

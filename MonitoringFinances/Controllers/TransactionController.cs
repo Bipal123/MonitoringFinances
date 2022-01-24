@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MonitoringFinances.Data;
 using MonitoringFinances.Models;
+using MonitoringFinances.Models.AdminModels;
 using MonitoringFinances.Models.Identity;
 using MonitoringFinances.Models.ViewModel;
 using System;
@@ -33,13 +34,13 @@ namespace MonitoringFinances.Controllers
             _signInManager = signInManager;
         }
 
-        public async Task<IActionResult> IndexAsync(string Id)
+        public async Task<IActionResult> IndexAsync(string id)
         {
-            if (Id == null)
+            if (id == null || (!id.Equals("Income") && !id.Equals("Expense")))
             {
                 return NotFound();
             }
-            string categoryType = Id;
+            string categoryType = id;
             //Get current user
             ApplicationUser currentUser = (ApplicationUser) await _userManager.GetUserAsync(User);
             if (currentUser == null)
@@ -52,7 +53,7 @@ namespace MonitoringFinances.Controllers
             foreach (Transaction transaction in transactionsForCurUser)
             {
                 transaction.Category.CategoryType = _db.CategoryType.Where(u => u.Id == transaction.Category.CategoryTypeId).FirstOrDefault();
-            };
+            }
             IEnumerable<Transaction> recordsByType = transactionsForCurUser.Where(u => u.Category.CategoryType.Name.Equals(categoryType));
 
             //Get Pie Chart Data
@@ -64,28 +65,33 @@ namespace MonitoringFinances.Controllers
                 {
                     recordsForThisMonth.Add(record);
                 }
-            };
+            }
 
             List<PieChartData> pieChartData = new List<PieChartData>();
-            IEnumerable<Category> categories = _db.Category.Where(u => u.CategoryType.Name.Equals(categoryType));
+            IEnumerable<Category> categories = _db.Category.Where(u => u.ApplicationUser.Id == currentUser.Id).Where(u => u.CategoryType.Name.Equals(categoryType));
             decimal totalSum = recordsForThisMonth.Sum(u => u.Amount);
             if (totalSum != 0)
             {
                 foreach (Category category in categories)
                 {
                     decimal sum = recordsForThisMonth.Where(u => u.Category.Id.Equals(category.Id)).Sum(u => u.Amount);
-                    pieChartData.Add(new PieChartData()
+                    if (sum != 0)
                     {
-                        xValue = category.Name,
-                        yValue = recordsForThisMonth.Where(u => u.Category.Id.Equals(category.Id)).Sum(u => u.Amount),
-                        text = (sum / totalSum).ToString("P", CultureInfo.InvariantCulture)
-                    });
+                        pieChartData.Add(new PieChartData()
+                        {
+                            xValue = category.Name,
+                            yValue = recordsForThisMonth.Where(u => u.Category.Id.Equals(category.Id)).Sum(u => u.Amount),
+                            text = (sum / totalSum).ToString("P", CultureInfo.InvariantCulture)
+                        });
+                    }
                 }
             }
+
             TransactionAllVM transactionAllVM = new TransactionAllVM()
             {
                 recordsByType = recordsByType,
-                pieChartData = pieChartData
+                pieChartData = pieChartData,
+                categoryType = categoryType
             };
             return View(transactionAllVM);
         }
@@ -100,6 +106,11 @@ namespace MonitoringFinances.Controllers
             else
             {
                 ApplicationUser currentUser = (ApplicationUser)await _userManager.GetUserAsync(User);
+                if (currentUser == null)
+                {
+                    return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                }
+
                 Transaction transaction = _db.Transaction.Include(u => u.Category).Where(u => u.Category.ApplicationUser.Id == currentUser.Id).Where(u => u.Id == id).FirstOrDefault();
                 transaction.Category.CategoryType = _db.CategoryType.Find(transaction.Category.CategoryTypeId);
                 if (transaction == null)
@@ -111,8 +122,14 @@ namespace MonitoringFinances.Controllers
         }
 
         [HttpGet]
-        public IActionResult UpSert(int? id, bool? isIncome)
+        public async Task<IActionResult> UpSertAsync(int? id, bool? isIncome)
         {
+            ApplicationUser currentUser = (ApplicationUser)await _userManager.GetUserAsync(User);
+            if (currentUser == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
             if (id == null || isIncome == null)
             {
                 return StatusCode(500);
@@ -120,7 +137,8 @@ namespace MonitoringFinances.Controllers
             IEnumerable<SelectListItem> subCategories;
             if ((bool) isIncome)
             {
-                subCategories = _db.Category.Where(u => u.CategoryType.Name.Equals("Income")).Select(i => new SelectListItem
+                
+                subCategories = _db.Category.Where(u => u.ApplicationUser.Id == currentUser.Id).Where(u => u.CategoryType.Name.Equals("Income")).Select(i => new SelectListItem
                 {
                     Text = i.Name,
                     Value = i.Id.ToString()
@@ -128,7 +146,7 @@ namespace MonitoringFinances.Controllers
             }
             else
             {
-                subCategories = _db.Category.Where(u => u.CategoryType.Name.Equals("Expense")).Select(i => new SelectListItem
+                subCategories = _db.Category.Where(u => u.ApplicationUser.Id == currentUser.Id).Where(u => u.CategoryType.Name.Equals("Expense")).Select(i => new SelectListItem
                 {
                     Text = i.Name,
                     Value = i.Id.ToString()
@@ -169,7 +187,11 @@ namespace MonitoringFinances.Controllers
                     _db.Transaction.Update(transaction);
                 }
                 _db.SaveChanges();
-                return RedirectToAction(nameof(Index));
+
+                Category currentCategory = _db.Category.Find(transaction.CategoryId);
+                CategoryType currentCategoryType = _db.CategoryType.Find(currentCategory.CategoryTypeId);
+
+                return RedirectToAction(nameof(Index), nameof(Transaction), new {id=currentCategoryType.Name});
             }
             else
             {

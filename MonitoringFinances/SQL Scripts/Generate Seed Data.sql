@@ -50,11 +50,14 @@ IF(NOT EXISTS(SELECT 1 FROM dbo.Category))
 	END
 
 DECLARE @RestaurantAdminId int, @TransportationAdminId int,
-		@GroceryAdminId int, @SalaryAdminId int;
+		@GroceryAdminId int, @SalaryAdminId int, 
+		@EntertainmentAdminId int, @OtherExpAdminId int;
 
 SET @RestaurantAdminId = (SELECT Id FROM Category WHERE Name = 'Restaurant' AND UserId = @AdminUserId);
 SET @TransportationAdminId = (SELECT Id FROM Category WHERE Name = 'Transportation' AND UserId = @AdminUserId);
 SET @GroceryAdminId = (SELECT Id FROM Category WHERE Name = 'Grocery' AND UserId = @AdminUserId);
+SET @EntertainmentAdminId = (SELECT Id FROM Category WHERE Name = 'Entertainment' AND UserId = @AdminUserId);
+SET @OtherExpAdminId = (SELECT Id FROM Category WHERE Name = 'Other Expenditure' AND UserId = @AdminUserId);
 SET @SalaryAdminId = (SELECT Id FROM Category WHERE Name = 'Salary' AND UserId = @AdminUserId);
 
 /* Seed Transaction Entity for Admin User */
@@ -137,5 +140,37 @@ IF(NOT EXISTS(SELECT 1 FROM dbo.Record))
 		(160, '2020-11-08', 'Kroger', @GroceryAdminId),
 		(450, '2020-11-01', 'University of Cincinnati', @SalaryAdminId),
 		(160, '2020-11-15', 'University of Cincinnati', @SalaryAdminId),
+		(160, '2020-11-08', 'University of Cincinnati', @SalaryAdminId),
+
+		(6.4, '2022-1-07', 'Krishna Indian Restaurant', @RestaurantAdminId),
+		(9.5, '2022-1-14', NULL, @RestaurantAdminId),
+		(10, '2022-1-18', NULL, @RestaurantAdminId),
+		(10.5, '2022-1-23', NULL, @RestaurantAdminId),
+		(16.2, '2022-1-6', 'Burger King w. Tyusha', @RestaurantAdminId),
+		
+		(8.81, '2022-1-10', 'Lyft to volunteering', @TransportationAdminId),
+		(8.81, '2022-1-15', NULL, @TransportationAdminId),
+		(8.81, '2022-1-20', NULL, @TransportationAdminId),
+		(8.81, '2022-1-7', 'Lyft to volunteering', @TransportationAdminId),
+		(8.81, '2022-1-15', NULL, @TransportationAdminId),
+		(22.4, '2022-1-20', NULL, @TransportationAdminId),
+		
+		(30.42, '2022-1-01', 'Kroger', @GroceryAdminId),
+		(60, '2022-1-08', 'Kroger', @GroceryAdminId),
+		(60, '2022-1-08', 'Kroger', @GroceryAdminId),
+		
+		(14.49, '2022-1-01', 'Netflix', @EntertainmentAdminId),
+		(9.99, '2022-1-05', 'Hulu', @EntertainmentAdminId),
+		(24.99, '2022-1-10', 'Disney+', @EntertainmentAdminId),
+
+		
+		(9.99, '2022-1-01', 'Zoom', @OtherExpAdminId),
+		(350, '2022-1-10', 'Book', @OtherExpAdminId),
+		(10, '2022-1-10', 'Rebate', @OtherExpAdminId),
+		(500, '2022-1-10', 'Laptop', @OtherExpAdminId),
+
+		(450, '2020-11-01', 'University of Cincinnati', @SalaryAdminId),
+		(160, '2020-11-15', 'University of Cincinnati', @SalaryAdminId),
 		(160, '2020-11-08', 'University of Cincinnati', @SalaryAdminId);
+
  	END
