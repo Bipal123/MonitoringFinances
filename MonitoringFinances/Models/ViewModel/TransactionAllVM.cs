@@ -7,7 +7,16 @@ namespace MonitoringFinances.Models.ViewModel
 {
     public class TransactionAllVM
     {
-        public IEnumerable<Transaction> incomeRecords;
-        public IEnumerable<Transaction> expenseRecords;
+        public class PieChartData
+        {
+            public string xValue;
+            public decimal yValue;
+            public string text;
+        }
+
+        public IEnumerable<Transaction> recordsByType;
+
+        public IList<PieChartData> pieChartData;
+
     }
 }

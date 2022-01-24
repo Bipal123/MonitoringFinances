@@ -9,8 +9,10 @@ using MonitoringFinances.Models.Identity;
 using MonitoringFinances.Models.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using static MonitoringFinances.Models.ViewModel.TransactionAllVM;
 
 namespace MonitoringFinances.Controllers
 {
@@ -30,8 +32,14 @@ namespace MonitoringFinances.Controllers
             _userManager = userManager;
             _signInManager = signInManager;
         }
-        public async Task<IActionResult> IndexAsync()
+
+        public async Task<IActionResult> IndexAsync(string Id)
         {
+            if (Id == null)
+            {
+                return NotFound();
+            }
+            string categoryType = Id;
             //Get current user
             ApplicationUser currentUser = (ApplicationUser) await _userManager.GetUserAsync(User);
             if (currentUser == null)
@@ -39,17 +47,45 @@ namespace MonitoringFinances.Controllers
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
             
+            //Get records by record type
             IEnumerable<Transaction> transactionsForCurUser = _db.Transaction.Include(u => u.Category).Where(u => u.Category.ApplicationUser.Id == currentUser.Id);
             foreach (Transaction transaction in transactionsForCurUser)
             {
                 transaction.Category.CategoryType = _db.CategoryType.Where(u => u.Id == transaction.Category.CategoryTypeId).FirstOrDefault();
             };
-            IEnumerable<Transaction> incomeRecords = transactionsForCurUser.Where(u => u.Category.CategoryType.Name.Equals("Income"));
-            IEnumerable<Transaction> expenseRecords = transactionsForCurUser.Where(u => u.Category.CategoryType.Name.Equals("Expense"));
+            IEnumerable<Transaction> recordsByType = transactionsForCurUser.Where(u => u.Category.CategoryType.Name.Equals(categoryType));
+
+            //Get Pie Chart Data
+            List<Transaction> recordsForThisMonth = new List<Transaction>();
+            foreach(Transaction record in recordsByType)
+            {
+                DateTime date = (DateTime) record.Date;
+                if (date.Month.Equals(DateTime.Now.Month))
+                {
+                    recordsForThisMonth.Add(record);
+                }
+            };
+
+            List<PieChartData> pieChartData = new List<PieChartData>();
+            IEnumerable<Category> categories = _db.Category.Where(u => u.CategoryType.Name.Equals(categoryType));
+            decimal totalSum = recordsForThisMonth.Sum(u => u.Amount);
+            if (totalSum != 0)
+            {
+                foreach (Category category in categories)
+                {
+                    decimal sum = recordsForThisMonth.Where(u => u.Category.Id.Equals(category.Id)).Sum(u => u.Amount);
+                    pieChartData.Add(new PieChartData()
+                    {
+                        xValue = category.Name,
+                        yValue = recordsForThisMonth.Where(u => u.Category.Id.Equals(category.Id)).Sum(u => u.Amount),
+                        text = (sum / totalSum).ToString("P", CultureInfo.InvariantCulture)
+                    });
+                }
+            }
             TransactionAllVM transactionAllVM = new TransactionAllVM()
             {
-                incomeRecords = incomeRecords,
-                expenseRecords = expenseRecords
+                recordsByType = recordsByType,
+                pieChartData = pieChartData
             };
             return View(transactionAllVM);
         }
