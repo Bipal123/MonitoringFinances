@@ -48,15 +48,17 @@ namespace MonitoringFinances.Controllers
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
             
-            //Get records by record type
+            //Get records by category type
             IEnumerable<Transaction> transactionsForCurUser = _db.Transaction.Include(u => u.Category).Where(u => u.Category.ApplicationUser.Id == currentUser.Id);
             foreach (Transaction transaction in transactionsForCurUser)
             {
                 transaction.Category.CategoryType = _db.CategoryType.Where(u => u.Id == transaction.Category.CategoryTypeId).FirstOrDefault();
             }
             IEnumerable<Transaction> recordsByType = transactionsForCurUser.Where(u => u.Category.CategoryType.Name.Equals(categoryType));
+            
+            IEnumerable<Category> categories = _db.Category.Where(u => u.ApplicationUser.Id == currentUser.Id).Where(u => u.CategoryType.Name.Equals(categoryType));
 
-            //Get Pie Chart Data
+            //Get Pie Chart Data for month
             List<Transaction> recordsForThisMonth = new List<Transaction>();
             foreach(Transaction record in recordsByType)
             {
@@ -66,32 +68,99 @@ namespace MonitoringFinances.Controllers
                     recordsForThisMonth.Add(record);
                 }
             }
-
-            List<PieChartData> pieChartData = new List<PieChartData>();
-            IEnumerable<Category> categories = _db.Category.Where(u => u.ApplicationUser.Id == currentUser.Id).Where(u => u.CategoryType.Name.Equals(categoryType));
-            decimal totalSum = recordsForThisMonth.Sum(u => u.Amount);
-            if (totalSum != 0)
+            List<PieChartData> pieChartDataByMonth = new List<PieChartData>();
+            decimal totalSumByMonth = recordsForThisMonth.Sum(u => u.Amount);
+            if (totalSumByMonth != 0)
             {
                 foreach (Category category in categories)
                 {
                     decimal sum = recordsForThisMonth.Where(u => u.Category.Id.Equals(category.Id)).Sum(u => u.Amount);
                     if (sum != 0)
                     {
-                        pieChartData.Add(new PieChartData()
+                        //xValue is category name, yValue is total sum
+                        pieChartDataByMonth.Add(new PieChartData()
                         {
                             xValue = category.Name,
-                            yValue = recordsForThisMonth.Where(u => u.Category.Id.Equals(category.Id)).Sum(u => u.Amount),
-                            text = (sum / totalSum).ToString("P", CultureInfo.InvariantCulture)
+                            yValue = sum,
+                            text = (sum / totalSumByMonth).ToString("p0")
                         });
                     }
                 }
             }
 
+            //Get this year transaction
+            List<Transaction> recordsForThisYear = new List<Transaction>();
+            foreach (Transaction record in recordsByType)
+            {
+                DateTime date = (DateTime) record.Date;
+                if (date.Year.Equals(DateTime.Now.Year))
+                {
+                    recordsForThisYear.Add(record);
+                }
+            }
+
+            //this year pie chart data by category
+            List<PieChartData> pieChartDataByYear = new List<PieChartData>();
+            decimal totalSumByYear = recordsForThisYear.Sum(u => u.Amount);
+            if (totalSumByYear != 0)
+            {
+                foreach (Category category in categories)
+                {
+                    decimal sum = recordsForThisYear.Where(u => u.Category.Id.Equals(category.Id)).Sum(u => u.Amount);
+                    if (sum != 0)
+                    {
+                        //xValue is category name, yValue is total sum, text is sum percentage
+                        pieChartDataByYear.Add(new PieChartData()
+                        {
+                            xValue = category.Name,
+                            yValue = sum,
+                            text = (sum / totalSumByYear).ToString("p0")
+                        });
+                    }
+                }
+            }
+
+            //this year column chart data by month
+            List<ColumnChartData> columnChartData = new List<ColumnChartData>();
+            if (totalSumByYear != 0)
+            {
+                for (int month=1; month <= DateTime.Now.Month; month++)
+                {
+                    decimal sum = recordsForThisYear.Where(u => DateTime.Parse(u.Date.ToString()).Month.Equals(month)).Sum(u => u.Amount);
+                    //xValue is month name, yValue is sum
+                    columnChartData.Add(new ColumnChartData()
+                    {
+                        xAxisText = CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(month),
+                        yValue = sum,
+                        text = sum.ToString("C2")
+                    });
+                    
+                }
+            }
+
+            //List<ColumnChartData> testColumnData = new List<ColumnChartData>();
+            //testColumnData.Add(new ColumnChartData()
+            //{
+            //    xAxisText = "Jan",
+            //    yValue = 600,
+            //    text = "8%"
+            //});
+            //testColumnData.Add(new ColumnChartData()
+            //{
+            //    xAxisText = "Feb",
+            //    yValue = 680,
+            //    text = "10%"
+            //});
+            
+
             TransactionAllVM transactionAllVM = new TransactionAllVM()
             {
                 recordsByType = recordsByType,
-                pieChartData = pieChartData,
-                categoryType = categoryType
+                pieChartDataForMonth = pieChartDataByMonth,
+                pieChartDataForYear = pieChartDataByYear,
+                categoryType = categoryType,
+                columnChartData = columnChartData
+                //columnChartData = testColumnData
             };
             return View(transactionAllVM);
         }

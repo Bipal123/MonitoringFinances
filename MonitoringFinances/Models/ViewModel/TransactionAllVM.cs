@@ -14,10 +14,21 @@ namespace MonitoringFinances.Models.ViewModel
             public string text;
         }
 
+        public class ColumnChartData
+        {
+            public string xAxisText;
+            public decimal yValue;
+            public string text;
+        }
+
         public IEnumerable<Transaction> recordsByType;
 
-        public List<PieChartData> pieChartData;
+        public List<PieChartData> pieChartDataForMonth;
+
+        public List<PieChartData> pieChartDataForYear;
 
         public string categoryType;
+
+        public List<ColumnChartData> columnChartData;
     }
 }

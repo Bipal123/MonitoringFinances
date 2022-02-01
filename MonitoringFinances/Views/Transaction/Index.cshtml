@@ -1,4 +1,5 @@
 ﻿@model MonitoringFinances.Models.ViewModel.TransactionAllVM
+@using System.Globalization;
 @using Syncfusion.EJ2
 
 @{
@@ -71,32 +72,141 @@ else
         </div>
         <div class="col-lg-6">
             <div class="row my-3">
-                @if (Model.pieChartData.Count() > 0)
-                {
-                    <ejs-accumulationchart id="pieChartByMonth" title="Current Month Records by Category">
-                        <e-accumulationchart-tooltipsettings enable="true"></e-accumulationchart-tooltipsettings>
-                        <e-accumulationchart-legendsettings visible="true" position="Bottom">
-                        </e-accumulationchart-legendsettings>
-                        <e-accumulation-series-collection>
-                            <e-accumulation-series dataSource="Model.pieChartData" xName="xValue" yName="yValue" name="Category" radius="70%" innerRadius="60%">
-                                <e-accumulationseries-datalabel name="text" visible="true">
-                                    <e-font fontWeight="600"></e-font>
-                                </e-accumulationseries-datalabel>
-                            </e-accumulation-series>
-                        </e-accumulation-series-collection>
-                    </ejs-accumulationchart>
-                }
-                else
-                {
-                    <p class="lead">No @Model.recordsByType record for this month!</p>
-                }
+                <div class="col-md-6">
+                    @if (Model.pieChartDataForYear.Count() > 0)
+                    {
+                        <ejs-accumulationchart id="pieChartByYear" load="load" title="@Model.categoryType for @DateTime.Now.Year" animationComplete="animationByYear">
+                            <e-accumulationchart-tooltipsettings enable="true"></e-accumulationchart-tooltipsettings>
+                            <e-accumulationchart-legendsettings visible="true" position="Bottom">
+                            </e-accumulationchart-legendsettings>
+                            <e-accumulation-series-collection>
+                                <e-accumulation-series dataSource="Model.pieChartDataForYear" xName="xValue" yName="yValue" name="Category" radius="90%" innerRadius="65%">
+                                    <e-accumulationseries-datalabel name="text" visible="true">
+                                        <e-font fontWeight="600"></e-font>
+                                    </e-accumulationseries-datalabel>
+                                </e-accumulation-series>
+                            </e-accumulation-series-collection>
+                        </ejs-accumulationchart>
+                    }
+                    else
+                    {
+                        <p class="lead">No @Model.categoryType record for this year!</p>
+                    }
+                </div>
+                <div class="col-md-6">
+                    @if (Model.pieChartDataForMonth.Count() > 0)
+                    {
+                        <ejs-accumulationchart id="pieChartByMonth" load="load" title="@Model.categoryType for @CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(DateTime.Now.Month)" animationComplete="animationByMonth">
+                            <e-accumulationchart-tooltipsettings enable="true"></e-accumulationchart-tooltipsettings>
+                            <e-accumulationchart-legendsettings visible="true" position="Bottom">
+                            </e-accumulationchart-legendsettings>
+                            <e-accumulation-series-collection>
+                                <e-accumulation-series dataSource="Model.pieChartDataForMonth" xName="xValue" yName="yValue" name="Category" radius="90%" innerRadius="65%">
+                                    <e-accumulationseries-datalabel name="text" visible="true">
+                                        <e-font fontWeight="600"></e-font>
+                                    </e-accumulationseries-datalabel>
+                                </e-accumulation-series>
+                            </e-accumulation-series-collection>
+                        </ejs-accumulationchart>
+                    }
+                    else
+                    {
+                        <p class="lead">No @Model.categoryType record for this month!</p>
+                    }
+                </div>
             </div>
             <div class="row my-3">
-                <p class="lead">Line chart data</p>
+                @if (Model.columnChartData.Count() > 0)
+                {
+                    <ejs-chart id="lineContainer" load="window.onChartLoad" title="Expense per month this year">
+                        <e-chart-tooltipsettings enable="true">
+                        </e-chart-tooltipsettings>
+                        <e-chart-primaryxaxis valueType="Category" interval=1>
+                            <e-majorgridlines width="0"></e-majorgridlines>
+                        </e-chart-primaryxaxis>
+                        <e-chart-primaryyaxis>
+                            <e-majorgridlines width="0"></e-majorgridlines>
+                            
+                        </e-chart-primaryyaxis>
+                        <e-chart-chartarea>
+                            <e-chartarea-border width="0"></e-chartarea-border>
+                        </e-chart-chartarea>
+                        <e-series-collection>
+                            <e-series dataSource="Model.columnChartData" xName='xAxisText' yName='yValue' width=2  type="@Syncfusion.EJ2.Charts.ChartSeriesType.Column">
+                                <e-series-marker>
+                                    <e-series-datalabel name="text" visible="true" position="Top">
+                                        <e-font color="#ffffff" fontWeight="600"></e-font>
+                                    </e-series-datalabel>
+                                </e-series-marker>
+                            </e-series>
+                            <e-series dataSource="Model.columnChartData" xName='xAxisText' yName='yValue' width=2 opacity="0.5" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
+                                <e-series-marker visible="true" height="10" width="10"></e-series-marker>
+                            </e-series>
+                        </e-series-collection>
+                    </ejs-chart>
+                }
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    var centerTitleByMonth = document.createElement('div');
+    centerTitleByMonth.innerHTML = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<p class="fs-5">Categorically</p>';
+    centerTitleByMonth.style.position = 'absolute';
+    centerTitleByMonth.style.visibility = 'hidden';
+    function load(args) {
+        var indexedTheme = location.hash.split('/')[1];
+        indexedTheme = indexedTheme ? indexedTheme : 'Material';
+        args.accumulation.theme = (indexedTheme.charAt(0).toUpperCase() + indexedTheme.slice(1).replace(/-dark/i, 'Dark').replace(/contrast/i, 'Contrast'));
+    }
+
+    function animationByMonth(args) {
+        centerTitleByMonth.style.fontSize = "13px";
+        var rect = centerTitleByMonth.getBoundingClientRect();
+        centerTitleByMonth.style.top = (args.accumulation.origin.y - rect.height / 2) + 'px';
+        centerTitleByMonth.style.left = (args.accumulation.origin.x - rect.width / 2) + 'px';
+        centerTitleByMonth.style.visibility = 'visible';
+        let points = args.accumulation.visibleSeries[0].points;
+        for (var point of points) {
+            if (point.labelPosition === 'Outside' && point.labelVisible) {
+                var label = document.getElementById('pieChartByMonth_datalabel_Series_0_text_' + point.index);
+                label.setAttribute('fill', 'black');
+            }
+        }
+
+    }
+
+    document.getElementById('pieChartByMonth').appendChild(centerTitleByMonth);
+
+    var centerTitleByYear = document.createElement('div');
+    centerTitleByYear.innerHTML = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<p class="fs-5">Categorically</p>';
+    centerTitleByYear.style.position = 'absolute';
+    centerTitleByYear.style.visibility = 'hidden';
+    function load(args) {
+        var indexedTheme = location.hash.split('/')[1];
+        indexedTheme = indexedTheme ? indexedTheme : 'Material';
+        args.accumulation.theme = (indexedTheme.charAt(0).toUpperCase() + indexedTheme.slice(1).replace(/-dark/i, 'Dark').replace(/contrast/i, 'Contrast'));
+    }
+
+    function animationByYear(args) {
+        centerTitleByYear.style.fontSize = "17px";
+        var rect = centerTitleByYear.getBoundingClientRect();
+        centerTitleByYear.style.top = (args.accumulation.origin.y - rect.height / 2) + 'px';
+        centerTitleByYear.style.left = (args.accumulation.origin.x - rect.width / 2) + 'px';
+        centerTitleByYear.style.visibility = 'visible';
+        let points = args.accumulation.visibleSeries[0].points;
+        for (var point of points) {
+            if (point.labelPosition === 'Outside' && point.labelVisible) {
+                var label = document.getElementById('pieChartByYear_datalabel_Series_0_text_' + point.index);
+                label.setAttribute('fill', 'black');
+            }
+        }
+
+    }
+    document.getElementById('pieChartByYear').appendChild(centerTitleByYear);
+</script>
+
 <!--Detail Transaction Modal-->
 <div class="modal fade" id="DetailTransactionModal" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -154,7 +264,7 @@ else
 </div>
 
 @section Scripts {
-    <script src ="~/js/TransactionIndex.js"></script>
+    <script src="~/js/TransactionIndex.js"></script>
     <script id="SnTemplate" type="text/x-template">
         <p style="margin: auto; font-size: 25px !important;" class="fw-bold">#</p>
     </script>
