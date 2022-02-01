@@ -57,29 +57,4 @@ function rowDataBound(args) {
     }
 }
 
-var centerTitle = document.createElement('div');
-centerTitle.innerHTML = 'Expenses in Year';
-centerTitle.style.position = 'absolute';
-centerTitle.style.visibility = 'hidden';
-var count = 0;
 
-function animation(args) {
-    centerTitle.style.fontSize = getFontSize(args.accumulation.initialClipRect.width);
-    var rect = centerTitle.getBoundingClientRect();
-    centerTitle.style.top = (args.accumulation.origin.y - rect.height / 2) + 'px';
-    centerTitle.style.left = (args.accumulation.origin.x - rect.width / 2) + 'px';
-    centerTitle.style.visibility = 'visible';
-    let points = args.accumulation.visibleSeries[0].points;
-    for (var point of points) {
-        if (point.labelPosition === 'Outside' && point.labelVisible) {
-            var label = document.getElementById('pieChartByMonth_datalabel_Series_0_text_' + point.index);
-            label.setAttribute('fill', 'black');
-        }
-    }
-}
-document.getElementById('pieChartByMonth').appendChild(centerTitle);
-
-function loaded(args) {
-    var pie = document.getElementById('pieChartByMonth').ej2_instances[0];
-    pie.animate();
-}
