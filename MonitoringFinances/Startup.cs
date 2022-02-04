@@ -38,17 +38,16 @@ namespace MonitoringFinances
         {
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NTY0MTE5QDMxMzkyZTM0MmUzMEE1OTM4R01nU0dQYmNRV01tWVNsTFRtUDM2VUNOcnh0ODM2dWtXTnVvcTg9");
 
-            //if (env.IsDevelopment())
-            //{
-            //    app.UseDeveloperExceptionPage();
-            //}
-            //else
-            //{
-            //    app.UseExceptionHandler("/Home/Error");
-            //    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-            //    app.UseHsts();
-            //}
-            app.UseDeveloperExceptionPage();
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
+            }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
