@@ -60,8 +60,9 @@ html {
 }
 
 body {
-  /* Margin bottom by footer height */
-  margin-bottom: 60px;
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
+    padding-top: 90px;
 }
 .footer {
   position: absolute;
