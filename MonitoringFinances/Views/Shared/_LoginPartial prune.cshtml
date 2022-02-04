@@ -20,11 +20,19 @@
 }
 else
 {
-    <li class="nav-item mx-1">
-        <a class="btn btn-outline-secondary" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
-    </li>
-    <li class="nav-item mx-1">
-        <a class="btn btn-outline-primary" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
-    </li>
+<li class="nav-item mx-1">
+    <a class="btn btn-success rounded-pill px-3 mb-2 mb-lg-0" id="register" asp-area="Identity" asp-page="/Account/Register">
+        <span class="d-flex align-items-center">
+            <span class="">Register</span>
+        </span>
+    </a>
+</li>
+<li class="nav-item mx-1">
+    <a class="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0" id="login" asp-area="Identity" asp-page="/Account/Login">
+        <span class="d-flex align-items-center">
+            <span class="">Login</span>
+        </span>
+    </a>
+</li>
 }
 </ul>
