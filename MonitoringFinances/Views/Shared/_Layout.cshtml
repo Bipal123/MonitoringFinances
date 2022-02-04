@@ -11,7 +11,7 @@
     <title>@ViewData["Title"] - MonitoringFinances</title>
     <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.css" />
     <link href="~/lib/fontawesome/css/all.css" rel="stylesheet">
-    <script defer src="~/lib/fontawesome/js/all.js"></script>
+    <script defer src="~/lfib/fontawesome/js/all.js"></script>
     <link rel="stylesheet" href="~/css/site.css" />
 
     <!-- Syncfusion Essential JS 2 Styles -->
@@ -33,7 +33,7 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light shadow-sm sticky-top" id="mainNav">
+        <nav class="navbar navbar-expand-lg navbar-light shadow-sm fixed-top fs-5 bg-white" id="mainNav">
             <div class="container px-5">
                 <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">Monitoring Finances</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,12 +51,15 @@
                                 <a class="nav-link me-lg-3" asp-area="" asp-controller="Transaction" asp-action="Index" asp-route-Id="Income">Income</a>
                             </li>
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-dark me-lg-3" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Management
+                                <a class="nav-link text-dark me-lg-3" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="far fa-user-circle fa-lg"></i>
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <li>
-                                        <a class="dropdown-item nav-link text-dark ps-2" asp-controller="Category" asp-action="Index">Categories</a>
+                                        <a id="manage" class="dropdown-item nav-link text-dark ps-2" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Manage Account</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item nav-link text-dark ps-2" asp-controller="Category" asp-action="Index">Manage Categories</a>
                                     </li>
                                     @if (User.IsInRole(WebConstant.AdminRole))
                                     {
@@ -70,34 +73,48 @@
                                         <li>
                                             <a class="dropdown-item nav-link text-dark ps-2" asp-area="Identity" asp-page="/Account/Register">Create User</a>
                                         </li>
+                                        <li>
+                                            <hr class="dropdown-divider" />
+                                        </li>
                                     }
+                                    <li>
+                                        <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                                            <button id="logout" type="submit" class="dropdown-item nav-link text-dark ps-2">Logout</button>
+                                        </form>
+                                    </li>
+
                                 </ul>
                             </li>
                         }
+                        else
+                        {
+                            <li class="nav-item mx-1">
+                                <a class="btn btn-success rounded-pill px-3 mb-2 mb-lg-0" id="register" asp-area="Identity" asp-page="/Account/Register">
+                                    <span class="d-flex align-items-center">
+                                        <span class="">Register</span>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="nav-item mx-1">
+                                <a class="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0" id="login" asp-area="Identity" asp-page="/Account/Login">
+                                    <span class="d-flex align-items-center">
+                                        <span class="">Login</span>
+                                    </span>
+                                </a>
+                            </li>
+                        }
                     </ul>
-                    <partial name="_LoginPartial" />
+                    @*<partial name="_LoginPartial" />*@
                 </div>
             </div>
         </nav>
     </header>
+    @RenderSection("HomePage", required: false)
     <div class="container-lg">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
-
-    <!--<footer class="bg-black footer text-center"">
-        <div class="container px-5">
-            <div class="text-white-50 small my-2">
-                <div class="my-0">&copy; Monitoring Finances 2021. All Rights Reserved.</div>
-                <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>-->
-                @*<span class="mx-1">&middot;</span>
-                <a href="#!">Terms</a>
-                <span class="mx-1">&middot;</span>
-                <a href="#!">FAQ</a>*@
-            <!--</div>
-        </div>
-    </footer>-->
     <footer class="border-top footer text-muted">
         <div class="container text-center">
             &copy; 2021 - MonitoringFinances
