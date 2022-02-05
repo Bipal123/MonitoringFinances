@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="~/css/TransactionIndex.css" />
 @if (Model.categoryType.Equals("Income"))
 {
+    ViewBag.Title = "Income";
     <style>
         .e-grid .e-altrow {
             background-color: #c1ffa0;
@@ -17,6 +18,7 @@
 }
 else
 {
+    ViewBag.Title = "Expense";
     <style>
         .e-grid .e-altrow {
             background-color: #fccfce;
