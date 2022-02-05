@@ -14,8 +14,11 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using MonitoringFinances.Data;
 using MonitoringFinances.Models;
+using MonitoringFinances.Models.AdminModels;
 using MonitoringFinances.Models.Identity;
+using MonitoringFinances.Service;
 
 namespace MonitoringFinances.Areas.Identity.Pages.Account
 {
@@ -27,19 +30,23 @@ namespace MonitoringFinances.Areas.Identity.Pages.Account
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly ApplicationDbContext _db;
+
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
             RoleManager<IdentityRole> roleManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            ApplicationDbContext db)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
             _roleManager = roleManager;
+            _db = db;
         }
 
         [BindProperty]
@@ -115,7 +122,13 @@ namespace MonitoringFinances.Areas.Identity.Pages.Account
                     {
                         await _userManager.AddToRoleAsync(user, WebConstant.StandardUserRole);
                     }
-                    
+
+                IdentityService identityService = new IdentityService();
+                IEnumerable<CategoryType> categoryTypes = _db.CategoryType; 
+
+                List<Category> preDefinedCategories = identityService.NewUserCategories(user, categoryTypes);
+                _db.Category.AddRange(preDefinedCategories);
+                _db.SaveChanges();
                  _logger.LogInformation("User created a new account with password.");
 
                  var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
