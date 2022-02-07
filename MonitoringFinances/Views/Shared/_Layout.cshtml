@@ -1,5 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@inject SignInManager<IdentityUser> SignInManager
+@inject SignInManager<IdentityUser> signInManager
 
 <!DOCTYPE html>
 <html lang="en">
@@ -51,7 +51,7 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ms-auto me-4 my-3 my-lg-0">
-                        @if (SignInManager.IsSignedIn(User))
+                        @if (signInManager.IsSignedIn(User))
                         {
                             <li class="nav-item">
                                 <a class="nav-link me-lg-3" asp-area="" asp-controller="Transaction" asp-action="Index" asp-route-Id="Expense">Expense</a>
