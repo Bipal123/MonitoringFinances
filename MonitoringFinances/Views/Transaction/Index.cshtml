@@ -48,87 +48,87 @@ else
             }
         </div>
     </div>
-    <div class="row my-3">
-        <div class="col-lg-6">
-            <div class="row my-3">
-                <div class="col-md-6">
-                    @if (Model.pieChartDataForYear.Count() > 0)
-                    {
-                        <ejs-accumulationchart id="pieChartByYear" load="load" title="@Model.categoryType for @DateTime.Now.Year" animationComplete="animationByYear" background="#F2F6F3">
-                            <e-accumulationchart-tooltipsettings enable="true"></e-accumulationchart-tooltipsettings>
-                            <e-accumulationchart-legendsettings visible="true" position="Bottom">
-                            </e-accumulationchart-legendsettings>
-                            <e-accumulation-series-collection>
-                                <e-accumulation-series dataSource="Model.pieChartDataForYear" xName="xValue" yName="yValue" name="Category" radius="90%" innerRadius="65%">
-                                    <e-accumulationseries-datalabel name="text" visible="true">
-                                        <e-font fontWeight="600"></e-font>
-                                    </e-accumulationseries-datalabel>
-                                </e-accumulation-series>
-                            </e-accumulation-series-collection>
-                        </ejs-accumulationchart>
-                    }
-                    else
-                    {
-                        <p class="lead">No @Model.categoryType record for this year!</p>
-                    }
+    @if (Model.recordsByType.Count() > 0)
+     {
+        <div class="row my-3">
+            <div class="col-lg-6">
+                <div class="row my-3">
+                    <div class="col-md-6">
+                        @if (Model.pieChartDataForYear.Count() > 0)
+                        {
+                            <ejs-accumulationchart id="pieChartByYear" load="load" title="@Model.categoryType for @DateTime.Now.Year" animationComplete="animationByYear" background="#F2F6F3">
+                                <e-accumulationchart-tooltipsettings enable="true"></e-accumulationchart-tooltipsettings>
+                                <e-accumulationchart-legendsettings visible="true" position="Bottom">
+                                </e-accumulationchart-legendsettings>
+                                <e-accumulation-series-collection>
+                                    <e-accumulation-series dataSource="Model.pieChartDataForYear" xName="xValue" yName="yValue" name="Category" radius="90%" innerRadius="65%">
+                                        <e-accumulationseries-datalabel name="text" visible="true">
+                                            <e-font fontWeight="600"></e-font>
+                                        </e-accumulationseries-datalabel>
+                                    </e-accumulation-series>
+                                </e-accumulation-series-collection>
+                            </ejs-accumulationchart>
+                        }
+                        else
+                        {
+                            <p class="lead">No @Model.categoryType record for this year!</p>
+                        }
+                    </div>
+                    <div class="col-md-6">
+                        @if (Model.pieChartDataForMonth.Count() > 0)
+                        {
+                            <ejs-accumulationchart id="pieChartByMonth" load="load" title="@Model.categoryType for @CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(DateTime.Now.Month)" animationComplete="animationByMonth" background="#F2F6F3">
+                                <e-accumulationchart-tooltipsettings enable="true"></e-accumulationchart-tooltipsettings>
+                                <e-accumulationchart-legendsettings visible="true" position="Bottom">
+                                </e-accumulationchart-legendsettings>
+                                <e-accumulation-series-collection>
+                                    <e-accumulation-series dataSource="Model.pieChartDataForMonth" xName="xValue" yName="yValue" name="Category" radius="90%" innerRadius="65%">
+                                        <e-accumulationseries-datalabel name="text" visible="true">
+                                            <e-font fontWeight="600"></e-font>
+                                        </e-accumulationseries-datalabel>
+                                    </e-accumulation-series>
+                                </e-accumulation-series-collection>
+                            </ejs-accumulationchart>
+                        }
+                        else
+                        {
+                            <p class="lead">No @Model.categoryType record for this month!</p>
+                        }
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    @if (Model.pieChartDataForMonth.Count() > 0)
+                <div class="row my-3">
+                    @if (Model.columnChartData.Count() > 0)
                     {
-                        <ejs-accumulationchart id="pieChartByMonth" load="load" title="@Model.categoryType for @CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(DateTime.Now.Month)" animationComplete="animationByMonth" background="#F2F6F3">
-                            <e-accumulationchart-tooltipsettings enable="true"></e-accumulationchart-tooltipsettings>
-                            <e-accumulationchart-legendsettings visible="true" position="Bottom">
-                            </e-accumulationchart-legendsettings>
-                            <e-accumulation-series-collection>
-                                <e-accumulation-series dataSource="Model.pieChartDataForMonth" xName="xValue" yName="yValue" name="Category" radius="90%" innerRadius="65%">
-                                    <e-accumulationseries-datalabel name="text" visible="true">
-                                        <e-font fontWeight="600"></e-font>
-                                    </e-accumulationseries-datalabel>
-                                </e-accumulation-series>
-                            </e-accumulation-series-collection>
-                        </ejs-accumulationchart>
-                    }
-                    else
-                    {
-                        <p class="lead">No @Model.categoryType record for this month!</p>
-                    }
-                </div>
-            </div>
-            <div class="row my-3">
-                @if (Model.columnChartData.Count() > 0)
-                {
-                    <ejs-chart id="lineContainer" load="window.onChartLoad" title="Expense per month this year" background="#F2F6F3">
-                        <e-chart-tooltipsettings enable="true" >
-                        </e-chart-tooltipsettings>
-                        <e-chart-primaryxaxis valueType="Category" interval=1>
-                            <e-majorgridlines width="0"></e-majorgridlines>
-                        </e-chart-primaryxaxis>
-                        <e-chart-primaryyaxis>
-                            <e-majorgridlines width="0"></e-majorgridlines>
+                        <ejs-chart id="lineContainer" load="window.onChartLoad" title="Expense per month this year" background="#F2F6F3">
+                            <e-chart-tooltipsettings enable="true">
+                            </e-chart-tooltipsettings>
+                            <e-chart-primaryxaxis valueType="Category" interval=1>
+                                <e-majorgridlines width="0"></e-majorgridlines>
+                            </e-chart-primaryxaxis>
+                            <e-chart-primaryyaxis>
+                                <e-majorgridlines width="0"></e-majorgridlines>
 
-                        </e-chart-primaryyaxis>
-                        <e-chart-chartarea>
-                            <e-chartarea-border width="0"></e-chartarea-border>
-                        </e-chart-chartarea>
-                        <e-series-collection>
-                            <e-series dataSource="Model.columnChartData" xName='xAxisText' yName='yValue' width=2 type="@Syncfusion.EJ2.Charts.ChartSeriesType.Column">
-                                <e-series-marker>
-                                    <e-series-datalabel name="text" visible="true" position="Top">
-                                        <e-font color="#ffffff" fontWeight="600"></e-font>
-                                    </e-series-datalabel>
-                                </e-series-marker>
-                            </e-series>
-                            <e-series dataSource="Model.columnChartData" xName='xAxisText' yName='yValue' width=2 opacity="0.5" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
-                                <e-series-marker visible="true" height="10" width="10"></e-series-marker>
-                            </e-series>
-                        </e-series-collection>
-                    </ejs-chart>
-                }
+                            </e-chart-primaryyaxis>
+                            <e-chart-chartarea>
+                                <e-chartarea-border width="0"></e-chartarea-border>
+                            </e-chart-chartarea>
+                            <e-series-collection>
+                                <e-series dataSource="Model.columnChartData" xName='xAxisText' yName='yValue' width=2 type="@Syncfusion.EJ2.Charts.ChartSeriesType.Column">
+                                    <e-series-marker>
+                                        <e-series-datalabel name="text" visible="true" position="Top">
+                                            <e-font color="#ffffff" fontWeight="600"></e-font>
+                                        </e-series-datalabel>
+                                    </e-series-marker>
+                                </e-series>
+                                <e-series dataSource="Model.columnChartData" xName='xAxisText' yName='yValue' width=2 opacity="0.5" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
+                                    <e-series-marker visible="true" height="10" width="10"></e-series-marker>
+                                </e-series>
+                            </e-series-collection>
+                        </ejs-chart>
+                    }
+                </div>
             </div>
-        </div>
-        <div class="col-lg-6">
-            @if (Model.recordsByType.Count() > 0)
-            {
+            <div class="col-lg-6">
                 <ejs-grid id="Grid" dataSource="Model.recordsByType" rowDataBound="rowDataBound" allowPaging="true" allowResizing="true" enableStickyHeader="true" allowSorting="true" allowFiltering="true" rowHeight="45">
                     <e-grid-filtersettings type="Excel" immediateModeDelay="1500" showFilterBarOperator="true"></e-grid-filtersettings>
                     <e-grid-pagesettings pageCount="3" pageSize="18"></e-grid-pagesettings>
@@ -140,16 +140,19 @@ else
                         <e-grid-column field="Category.Name" headerTemplate="#CategoryTemplate" textAlign="Center" headerText=" Category" width="130"></e-grid-column>
                         <e-grid-column headerText="Action" headerTemplate="#ActionTemplate" textAlign="Center" template="${recordAction(data)}" width="150"></e-grid-column>
                     </e-grid-columns>
-                </ejs-grid>
-            }
-            else
-            {
-                <div class="col p-3">
-                    <p class="lead">No @Model.categoryType Record Exists!</p>
-                </div>
-            }
+                </ejs-grid>                
+            </div>
         </div>
-    </div>
+     } 
+    else
+    {
+        <div class="row my-3">
+            <div class="col p-3">
+                <p class="lead">No @Model.categoryType Record Exists!</p>
+            </div>
+        </div>
+    }
+    
 </div>
 
 <!--Detail Transaction Modal-->
