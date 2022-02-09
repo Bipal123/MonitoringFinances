@@ -1,0 +1,34 @@
+﻿@model MonitoringFinances.Models.ViewModel.CategoryVM
+
+<form method="post" asp-controller="Category" asp-action="UpSert" id="UpSertCategoryForm">
+    @if (Model.Category.Id != 0)
+    {
+        <input type="hidden" asp-for="Category.Id" />
+    }
+    <div class="row mb-3">
+        <label asp-for="Category.Name" class="col-sm-2 col-form-label">Name</label>
+        <div class="col-sm-10">
+            <input asp-for="Category.Name" class="form-control" id="Name" aria-describedby="Name">
+            <span asp-validation-for="Category.Name" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label asp-for="Category.CategoryTypeId" class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-10">
+            <select asp-for="Category.CategoryTypeId" asp-items="@Model.CategoryTypeSelectList" class="form-select">
+                <option disabled selected>--Select Type--</option>
+            </select>
+            <span asp-validation-for="Category.CategoryTypeId" class="text-danger"></span>
+        </div>
+    </div>
+    @if (Model.Category.Id != 0)
+    {
+        <p class="text-warning" style="color: #E89805 !important">Warning: Changing type will also move associated transactions!</p>
+    }
+</form>
+
+<!--Required Scripts and Stuff-->
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>

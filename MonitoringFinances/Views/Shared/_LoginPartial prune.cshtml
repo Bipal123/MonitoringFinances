@@ -1,0 +1,38 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using MonitoringFinances.Models.Identity
+
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+<ul class="navbar-nav">
+@if (SignInManager.IsSignedIn(User))
+{
+    ApplicationUser currentUser = (ApplicationUser) await UserManager.GetUserAsync(User);
+    var firstName = currentUser.FirstName;
+    <li class="nav-item">
+        <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @firstName!</a>
+    </li>
+    <li class="nav-item" mx-1>
+        <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+            <button id="logout" type="submit" class="btn btn-outline-secondary">Logout</button>
+        </form>
+    </li>
+}
+else
+{
+<li class="nav-item mx-1">
+    <a class="btn btn-success rounded-pill px-3 mb-2 mb-lg-0" id="register" asp-area="Identity" asp-page="/Account/Register">
+        <span class="d-flex align-items-center">
+            <span class="">Register</span>
+        </span>
+    </a>
+</li>
+<li class="nav-item mx-1">
+    <a class="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0" id="login" asp-area="Identity" asp-page="/Account/Login">
+        <span class="d-flex align-items-center">
+            <span class="">Login</span>
+        </span>
+    </a>
+</li>
+}
+</ul>
