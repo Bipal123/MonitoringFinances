@@ -1,0 +1,287 @@
+﻿@model MonitoringFinances.Models.ViewModel.TransactionAllVM
+@using System.Globalization;
+@using Syncfusion.EJ2
+
+@{
+    List<object> sortOrder = new List<object>();
+    sortOrder.Add(new { field = "Date", direction = "Descending" });
+}
+<link rel="stylesheet" href="~/css/TransactionIndex.css" />
+@if (Model.categoryType.Equals("Income"))
+{
+    ViewBag.Title = "Income";
+    <style>
+        .e-grid .e-altrow {
+            background-color: #c1ffa0;
+        }
+    </style>
+}
+else
+{
+    ViewBag.Title = "Expense";
+    <style>
+        .e-grid .e-altrow {
+            background-color: #fccfce;
+        }
+    </style>
+}
+
+<div class="container">
+    <div class="row my-3">
+        <div class="col-12 col-md-8 p-3 ">
+            <h1 class="display-5">
+                @Model.categoryType
+            </h1>
+        </div>
+        <div class="col-12 col-md-4 text-end d-flex align-items-center justify-content-md-end">
+            @if (Model.categoryType.Equals("Income"))
+            {
+                <a class="btn btn-success px-4 fs-5" onclick="UpSert(0, true)">
+                    <i class="fas fa-plus"></i>&nbsp;Create New
+                </a>
+            }
+            else
+            {
+                <a class="btn btn-danger px-4 fs-5 mx-2" onclick="UpSert(0, false)">
+                    <i class="fas fa-plus"></i>&nbsp;Create New
+                </a>
+            }
+        </div>
+    </div>
+    @if (Model.recordsByType.Count() > 0)
+     {
+        <div class="row my-3">
+            <div class="col-lg-6">
+                <div class="row my-3">
+                    <div class="col-md-6">
+                        @if (Model.pieChartDataForYear.Count() > 0)
+                        {
+                            <ejs-accumulationchart id="pieChartByYear" load="load" title="@Model.categoryType for @DateTime.Now.Year" animationComplete="animationByYear" background="#F2F6F3">
+                                <e-accumulationchart-tooltipsettings enable="true"></e-accumulationchart-tooltipsettings>
+                                <e-accumulationchart-legendsettings visible="true" position="Bottom">
+                                </e-accumulationchart-legendsettings>
+                                <e-accumulation-series-collection>
+                                    <e-accumulation-series dataSource="Model.pieChartDataForYear" xName="xValue" yName="yValue" name="Category" radius="90%" innerRadius="65%">
+                                        <e-accumulationseries-datalabel name="text" visible="true">
+                                            <e-font fontWeight="600"></e-font>
+                                        </e-accumulationseries-datalabel>
+                                    </e-accumulation-series>
+                                </e-accumulation-series-collection>
+                            </ejs-accumulationchart>
+                        }
+                        else
+                        {
+                            <p class="lead">No @Model.categoryType record for this year!</p>
+                        }
+                    </div>
+                    <div class="col-md-6">
+                        @if (Model.pieChartDataForMonth.Count() > 0)
+                        {
+                            <ejs-accumulationchart id="pieChartByMonth" load="load" title="@Model.categoryType for @CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(DateTime.Now.Month)" animationComplete="animationByMonth" background="#F2F6F3">
+                                <e-accumulationchart-tooltipsettings enable="true"></e-accumulationchart-tooltipsettings>
+                                <e-accumulationchart-legendsettings visible="true" position="Bottom">
+                                </e-accumulationchart-legendsettings>
+                                <e-accumulation-series-collection>
+                                    <e-accumulation-series dataSource="Model.pieChartDataForMonth" xName="xValue" yName="yValue" name="Category" radius="90%" innerRadius="65%">
+                                        <e-accumulationseries-datalabel name="text" visible="true">
+                                            <e-font fontWeight="600"></e-font>
+                                        </e-accumulationseries-datalabel>
+                                    </e-accumulation-series>
+                                </e-accumulation-series-collection>
+                            </ejs-accumulationchart>
+                        }
+                        else
+                        {
+                            <p class="lead">No @Model.categoryType record for this month!</p>
+                        }
+                    </div>
+                </div>
+                <div class="row my-3">
+                    @if (Model.columnChartData.Count() > 0)
+                    {
+                        <ejs-chart id="lineContainer" load="window.onChartLoad" title="Expense per month this year" background="#F2F6F3">
+                            <e-chart-tooltipsettings enable="true">
+                            </e-chart-tooltipsettings>
+                            <e-chart-primaryxaxis valueType="Category" interval=1>
+                                <e-majorgridlines width="0"></e-majorgridlines>
+                            </e-chart-primaryxaxis>
+                            <e-chart-primaryyaxis>
+                                <e-majorgridlines width="0"></e-majorgridlines>
+
+                            </e-chart-primaryyaxis>
+                            <e-chart-chartarea>
+                                <e-chartarea-border width="0"></e-chartarea-border>
+                            </e-chart-chartarea>
+                            <e-series-collection>
+                                <e-series dataSource="Model.columnChartData" xName='xAxisText' yName='yValue' width=2 type="@Syncfusion.EJ2.Charts.ChartSeriesType.Column">
+                                    <e-series-marker>
+                                        <e-series-datalabel name="text" visible="true" position="Top">
+                                            <e-font color="#ffffff" fontWeight="600"></e-font>
+                                        </e-series-datalabel>
+                                    </e-series-marker>
+                                </e-series>
+                                <e-series dataSource="Model.columnChartData" xName='xAxisText' yName='yValue' width=2 opacity="0.5" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
+                                    <e-series-marker visible="true" height="10" width="10"></e-series-marker>
+                                </e-series>
+                            </e-series-collection>
+                        </ejs-chart>
+                    }
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <ejs-grid id="Grid" dataSource="Model.recordsByType" rowDataBound="rowDataBound" allowPaging="true" allowResizing="true" enableStickyHeader="true" allowSorting="true" allowFiltering="true" rowHeight="45">
+                    <e-grid-filtersettings type="Excel" immediateModeDelay="1500" showFilterBarOperator="true"></e-grid-filtersettings>
+                    <e-grid-pagesettings pageCount="3" pageSize="18"></e-grid-pagesettings>
+                    <e-grid-sortsettings columns="sortOrder"></e-grid-sortsettings>
+                    <e-grid-columns>
+                        <e-grid-column headerText="#" headerTemplate="#SnTemplate" textAlign="Center" width="60"></e-grid-column>
+                        <e-grid-column field="Amount" headerTemplate="#AmountTemplate" textAlign="Center" format="C2" width="100"></e-grid-column>
+                        <e-grid-column field="Date" headerTemplate="#DateTemplate" textAlign="Center" headerText=" Date" format="MMM d, yyyy" width="130"></e-grid-column>
+                        <e-grid-column field="Category.Name" headerTemplate="#CategoryTemplate" textAlign="Center" headerText=" Category" width="130"></e-grid-column>
+                        <e-grid-column headerText="Action" headerTemplate="#ActionTemplate" textAlign="Center" template="${recordAction(data)}" width="150"></e-grid-column>
+                    </e-grid-columns>
+                </ejs-grid>                
+            </div>
+        </div>
+     } 
+    else
+    {
+        <div class="row my-3">
+            <div class="col p-3">
+                <p class="lead">No @Model.categoryType Record Exists!</p>
+            </div>
+        </div>
+    }
+    
+</div>
+
+<!--Detail Transaction Modal-->
+<div class="modal fade" id="DetailTransactionModal" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p class="h5 modal-title" id="detail-modal-title"></p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="DetailTransactionModalBody">
+                <!--This is where my form data will go-->
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Create/Edit Category Modal-->
+<div class="modal fade" id="UpSertTransactionModal" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p class="h5 modal-title" id="upsert-modal-title">Create Category</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="UpSertTransactionModalBody">
+                <!--This is where my form data will go-->
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="UpSertTransactionFormButton" form="UpSertTransactionForm" type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Delete Category Modal-->
+<div class="modal fade" id="DeleteTransactionModal" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p class="h5 modal-title" id="delete-modal-title"></p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="DeleteTransactionModalBody">
+                <!--This is where my form data will go-->
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="DeleteTransactionFormButton" form="DeleteTransactionForm" type="submit" class="btn btn-danger">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/TransactionIndex.js"></script>
+    <script id="SnTemplate" type="text/x-template">
+        <p style="margin: auto; font-size: 25px !important;" class="fw-bold">#</p>
+    </script>
+    <script id="AmountTemplate" type="text/x-template">
+        <p style="margin: auto; font-size: 25px !important;" class="fw-bold"><i style="font-size: 25px !important;" class="far fa-money-bill-alt"></i></p>
+    </script>
+    <script id="DateTemplate" type="text/x-template">
+        <p style="margin: auto; font-size: 25px !important;" class="fs-6 fw-bold"><i style="font-size: 25px !important;" class="far fa-calendar-alt"></i></p>
+    </script>
+    <script id="CategoryTemplate" type="text/x-template">
+        <p style="margin: auto;" class="fs-6 fw-bold">Category</p>
+    </script>
+    <script id="ActionTemplate" type="text/x-template">
+        <p style="margin:auto;" class="fs-6 fw-bold">Action</p>
+    </script>
+    <script>
+        var centerTitleByMonth = document.createElement('div');
+        centerTitleByMonth.innerHTML = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<p class="fs-5">Categorically</p>';
+        centerTitleByMonth.style.position = 'absolute';
+        centerTitleByMonth.style.visibility = 'hidden';
+        function load(args) {
+            var indexedTheme = location.hash.split('/')[1];
+            indexedTheme = indexedTheme ? indexedTheme : 'Material';
+            args.accumulation.theme = (indexedTheme.charAt(0).toUpperCase() + indexedTheme.slice(1).replace(/-dark/i, 'Dark').replace(/contrast/i, 'Contrast'));
+        }
+
+        function animationByMonth(args) {
+            centerTitleByMonth.style.fontSize = "13px";
+            var rect = centerTitleByMonth.getBoundingClientRect();
+            centerTitleByMonth.style.top = (args.accumulation.origin.y - rect.height / 2) + 'px';
+            centerTitleByMonth.style.left = (args.accumulation.origin.x - rect.width / 2) + 'px';
+            centerTitleByMonth.style.visibility = 'visible';
+            let points = args.accumulation.visibleSeries[0].points;
+            for (var point of points) {
+                if (point.labelPosition === 'Outside' && point.labelVisible) {
+                    var label = document.getElementById('pieChartByMonth_datalabel_Series_0_text_' + point.index);
+                    label.setAttribute('fill', 'black');
+                }
+            }
+
+        }
+
+        document.getElementById('pieChartByMonth').appendChild(centerTitleByMonth);
+
+        var centerTitleByYear = document.createElement('div');
+        centerTitleByYear.innerHTML = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<p class="fs-5">Categorically</p>';
+        centerTitleByYear.style.position = 'absolute';
+        centerTitleByYear.style.visibility = 'hidden';
+        function load(args) {
+            var indexedTheme = location.hash.split('/')[1];
+            indexedTheme = indexedTheme ? indexedTheme : 'Material';
+            args.accumulation.theme = (indexedTheme.charAt(0).toUpperCase() + indexedTheme.slice(1).replace(/-dark/i, 'Dark').replace(/contrast/i, 'Contrast'));
+        }
+
+        function animationByYear(args) {
+            centerTitleByYear.style.fontSize = "17px";
+            var rect = centerTitleByYear.getBoundingClientRect();
+            centerTitleByYear.style.top = (args.accumulation.origin.y - rect.height / 2) + 'px';
+            centerTitleByYear.style.left = (args.accumulation.origin.x - rect.width / 2) + 'px';
+            centerTitleByYear.style.visibility = 'visible';
+            let points = args.accumulation.visibleSeries[0].points;
+            for (var point of points) {
+                if (point.labelPosition === 'Outside' && point.labelVisible) {
+                    var label = document.getElementById('pieChartByYear_datalabel_Series_0_text_' + point.index);
+                    label.setAttribute('fill', 'black');
+                }
+            }
+
+        }
+        document.getElementById('pieChartByYear').appendChild(centerTitleByYear);
+    </script>
+}
