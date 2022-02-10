@@ -23,3 +23,6 @@ To build locally, restore nuget packages, restore database migration scripts, an
 
 ### License
 This project is distributed under the "GNU General Public License v3.0" and can be freely modified and distributed for commercial uses. Refer to license file in project for more information.
+
+### Contact
+Bipal Goyal at goyalbl@mail.uc.edu
